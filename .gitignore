@@ -7,3 +7,5 @@
 *.ckpt
 sim_datasets/
 joined/
+ros/devel/
+ros/build/

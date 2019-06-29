@@ -1,34 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c01730b2-e2cc-452a-ab94-e5c0255e0532" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ros/src/tl_detector/autolabel_dataset.py" afterPath="$PROJECT_DIR$/ros/src/tl_detector/autolabel_dataset.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" afterPath="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py" afterPath="$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image11.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image11.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image15.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image15.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image17.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image17.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image18.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image18.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image19.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image19.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image21.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image21.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image22.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image22.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image23.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image23.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image24.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image24.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image27.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image27.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image28.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image28.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image29.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image29.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image30.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image30.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image31.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image31.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image33.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image33.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image34.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image34.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image35.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image35.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image36.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image36.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image37.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image37.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image38.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image38.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image39.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image39.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image9.xml" afterPath="$PROJECT_DIR$/sim_datasets/tl-set-1/voc-labels/image9.xml" />
-    </list>
+    <list default="true" id="c01730b2-e2cc-452a-ab94-e5c0255e0532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -212,7 +185,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
+    <frame x="65" y="24" width="1855" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.49834254" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />

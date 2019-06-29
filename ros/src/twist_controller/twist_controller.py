@@ -1,17 +1,13 @@
-<<<<<<< HEAD
 from pid import PID
 from lowpass import LowPassFilter
 from yaw_controller import YawController
 import rospy
-=======
->>>>>>> 5b95c5f770702413bb02a9714468d58dd019e1b3
 
 GAS_DENSITY = 2.858
 ONE_MPH = 0.44704
 
 
 class Controller(object):
-<<<<<<< HEAD
     def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit,
         accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle):
 
@@ -88,13 +84,3 @@ class Controller(object):
 
 
 
-=======
-    def __init__(self, *args, **kwargs):
-        # TODO: Implement
-        pass
-
-    def control(self, *args, **kwargs):
-        # TODO: Change the arg, kwarg list to suit your needs
-        # Return throttle, brake, steer
-        return 1., 0., 0.
->>>>>>> 5b95c5f770702413bb02a9714468d58dd019e1b3

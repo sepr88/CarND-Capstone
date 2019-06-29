@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import rospy
-=======
->>>>>>> 5b95c5f770702413bb02a9714468d58dd019e1b3
 
 MIN_NUM = float('-inf')
 MAX_NUM = float('inf')
@@ -35,10 +32,7 @@ class PID(object):
             self.int_val = integral
         self.last_error = error
 
-<<<<<<< HEAD
         #rospy.logwarn("Throttle: {0}".format(val))
         #rospy.logwarn("Velocity error: {0}".format(error))
 
-=======
->>>>>>> 5b95c5f770702413bb02a9714468d58dd019e1b3
         return val

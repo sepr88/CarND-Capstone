@@ -54,7 +54,6 @@ class DBWNode(object):
                                          BrakeCmd, queue_size=1)
 
         # TODO: Create `Controller` object
-<<<<<<< HEAD
         # self.controller = Controller(<Arguments you wish to provide>)\
         self.controller = Controller(vehicle_mass=vehicle_mass,
                                     fuel_capacity=fuel_capacity,
@@ -78,11 +77,6 @@ class DBWNode(object):
         self.linear_vel = None
         self.angular_vel = None
         self.throttle = self.steering = self.brake = 0
-=======
-        # self.controller = Controller(<Arguments you wish to provide>)
-
-        # TODO: Subscribe to all the topics you need to
->>>>>>> 5b95c5f770702413bb02a9714468d58dd019e1b3
 
         self.loop()
 
@@ -98,7 +92,6 @@ class DBWNode(object):
             #                                                     <any other argument you need>)
             # if <dbw is enabled>:
             #   self.publish(throttle, brake, steer)
-<<<<<<< HEAD
 
             if not None in (self.current_vel, self.linear_vel, self.angular_vel):
                 self.throttle, self.brake, self.steering = self.controller.control(self.current_vel,
@@ -119,10 +112,6 @@ class DBWNode(object):
     def velocity_cb(self, msg):
         self.current_vel = msg.twist.linear.x
 
-=======
-            rate.sleep()
-
->>>>>>> 5b95c5f770702413bb02a9714468d58dd019e1b3
     def publish(self, throttle, brake, steer):
         tcmd = ThrottleCmd()
         tcmd.enable = True

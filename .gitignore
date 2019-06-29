@@ -5,3 +5,5 @@
 *.mp4
 *.avi
 *.ckpt
+sim_datasets/
+joined/

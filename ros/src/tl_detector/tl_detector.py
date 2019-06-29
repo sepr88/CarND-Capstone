@@ -22,8 +22,8 @@ CAMERA_IMG_PROCESS_RATE = 0.20 #ms
 WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = True
-TD_RATE = 10  # only save every i-th image
-TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/tl-set-1'
+TD_RATE = 5  # only save every i-th image
+TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/tl-set-2'
 TL_DEBUG = True
 
 class TLDetector(object):

@@ -9,6 +9,8 @@ import visualization_utils as vis_utils
 import label_map_util
 from PIL import Image
 from utils import ops as utils_ops
+import tl_utils
+from time import sleep
 
 PATH_TO_LABELS = '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/data/mscoco_label_map.pbtxt'
 PATH_TO_IMG = '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/examples/'
@@ -40,10 +42,13 @@ class TrafficLightClassifier(object):
         self.img_path = os.path.join(self.base_path, 'IMG')
         self.voc_path = os.path.join(self.base_path, 'voc-labels')
         self.csv_path = os.path.join(self.base_path, 'labels.csv')
+        self.overwrite = True
 
         # create new output path if doesnt exist
         if not os.path.exists(self.voc_path):
             os.mkdir(self.voc_path)
+        else:
+            self.overwrite = tl_utils.yes_or_no('Overwrite existing?')
 
         pass
 
@@ -72,21 +77,30 @@ class TrafficLightClassifier(object):
         with open(self.csv_path, 'r') as f:
             reader = csv.reader(f, delimiter=';')
 
+            num_lines = sum(1 for line in reader)
+            f.seek(0)
+            i = 0
+
             for line in reader:
+                tl_utils.print_progress(i, num_lines, prefix='Progress', suffix='Complete', bar_length=50)
                 img_name = line[0].split('/')[-1]
                 img_path_full = os.path.join(self.img_path, img_name)
                 label = line[1]
 
                 if not os.path.isfile(img_path_full):
-                    print('{} does not exist'.format(img_path_full))
-                    return
+                    print('Skipping {}. File does not exist'.format(img_path_full))
+                    i += 1
+                    continue
+
+                if not self.overwrite and self.label_exists(img_name=img_name):
+                    i += 1
+                    continue
 
                 img = Image.open(img_path_full)
                 img = self.load_image_into_numpy_array(img)
 
                 self.process_image(img=img, label=label, img_name=img_name, img_path_full=img_path_full)
-
-        return True
+                i += 1
 
     def process_image(self, img, label, img_name, img_path_full):
 
@@ -173,6 +187,11 @@ class TrafficLightClassifier(object):
                     output_dict['detection_masks'] = output_dict['detection_masks'][0]
 
         return output_dict
+
+    def label_exists(self, img_name):
+        xml_file = img_name.split('.')[0]
+        xml_file = os.path.join(self.voc_path, '{}.xml'.format(xml_file))
+        return os.path.isfile(xml_file)
 
 
 def convert_to_pascal_voc(out_path, img_path, img_name, boxes, label, img_shape):

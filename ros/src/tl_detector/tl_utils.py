@@ -16,7 +16,7 @@ def save_td(uid, cv_image, label, csv_path, img_path):
         path:       - Required : folder to store the img data (Str)
     """
 
-    img_path_full = join(img_path, 'image{uid}.png'.format(uid=uid))
+    img_path_full = join(img_path, 'image{uid}.jpg'.format(uid=uid))
 
     # save image
     cv2.imwrite(img_path_full, cv_image)

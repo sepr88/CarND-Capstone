@@ -91,7 +91,7 @@ def dict_to_tf_example(data,
         ValueError: if the image pointed to by data['filename'] is not a valid JPEG
     """
 
-    img_path = os.path.join(data['folder'], image_subdirectory, data['filename'])
+    img_path = os.path.join(image_subdirectory, data['filename'])
     full_path = os.path.join(dataset_directory, img_path)
 
     with tf.gfile.GFile(full_path, 'rb') as fid:
@@ -168,7 +168,7 @@ def main(_):
 
     label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)
 
-    img_path = os.path.join(data_dir, FLAGS.set, 'IMG')
+    img_path = os.path.join(data_dir, FLAGS.set, 'img')
     examples_list = glob.glob(img_path + '/*.jpg')
 
     # examples_list = dataset_util.read_examples_list(examples_path)
@@ -187,7 +187,8 @@ def main(_):
             tf_example = dict_to_tf_example(data=data,
                                             dataset_directory=os.path.join(FLAGS.data_dir, FLAGS.set),
                                             label_map_dict=label_map_dict,
-                                            ignore_difficult_instances=FLAGS.ignore_difficult_instances)
+                                            ignore_difficult_instances=FLAGS.ignore_difficult_instances,
+                                            image_subdirectory='img')
 
             writer.write(tf_example.SerializeToString())
 

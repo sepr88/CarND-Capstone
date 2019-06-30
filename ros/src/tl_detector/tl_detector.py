@@ -7,29 +7,82 @@ from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-from light_classification.tl_classifier import TLClassifier
-import tf
+import tensorflow as tf
 import cv2
 import yaml
 from scipy.spatial import KDTree
 import tl_utils
 import os
+import label_map_util
+import numpy as np
 
 STATE_COUNT_THRESHOLD = 3
 TEST_MODE_ENABLED = True
 LOGGING_THROTTLE_FACTOR = 5
-CAMERA_IMG_PROCESS_RATE = 0.20 #ms
+CAMERA_IMG_PROCESS_RATE = 0.20  # ms
 WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = True
 TD_RATE = 5  # only save every i-th image
-TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/tl-set-1'
+TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-1'
 TL_DEBUG = True
+
+
+class TLClassifier(object):
+    def __init__(self, model_path, label_map_path=None):
+        self.detection_graph = tf.Graph()
+
+        with self.detection_graph.as_default():
+            od_graph_def = tf.GraphDef()
+            with tf.gfile.GFile(model_path, 'rb') as fid:
+                serialized_graph = fid.read()
+                od_graph_def.ParseFromString(serialized_graph)
+                tf.import_graph_def(od_graph_def, name='')
+
+                self.image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
+                self.d_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
+                self.d_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
+                self.d_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
+                self.num_d = self.detection_graph.get_tensor_by_name('num_detections:0')
+                self.sess = tf.Session(graph=self.detection_graph)
+
+        self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
+
+    def get_classification(self, img):
+
+        img = TLClassifier.load_image_into_numpy_array(img)
+        img_expanded = np.expand_dims(img, axis=0)
+
+        with self.detection_graph.as_default():
+            # Expand dimension since the model expects image to have shape [1, None, None, 3].
+            (boxes, scores, classes, num) = self.sess.run([self.d_boxes, self.d_scores, self.d_classes, self.num_d],
+                                                          feed_dict={self.image_tensor: img_expanded})
+
+        classes = np.squeeze(classes)
+
+        green = False
+        for c in classes:
+            if c == 1:
+                return TrafficLight.RED
+            if c == 2:
+                return TrafficLight.YELLOW
+            if c == 3:
+                green = True
+
+        if green:
+            return TrafficLight.GREEN
+        else:
+            return TrafficLight.UNKNOWN
+
+    @staticmethod
+    def load_image_into_numpy_array(image):
+        (im_width, im_height) = image.size
+        return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+
 
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
-        rospy.logwarn('************** initializing TLDetector @@@@@@@@@@@@@')
 
         self.pose = None
         self.waypoints = None
@@ -37,6 +90,7 @@ class TLDetector(object):
         self.waypoint_tree = None
         self.camera_image = None
         self.lights = []
+        self.has_image = False
 
         self.td_id = 1
         self.img_count = 0
@@ -54,7 +108,7 @@ class TLDetector(object):
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
 
         sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
-        #sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=2*52428800)
+        # sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=2*52428800)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -62,10 +116,9 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        
-        self.light_classifier = TLClassifier('frozen_inference_graph_sim_v1.4.pb')
-        #self.light_classifier = TLClassifier('ssd_mobilenet_v1_sim_fronzen_inference_graph.pb')
-        #self.light_classifier = TLClassifier('faster_rcnn_sim_frozen_inference_graph.pb')
+
+        # TODO: Switch classifier if on site
+        self.classifier = TLClassifier('frozen_inference_graph_sim_v1.4.pb')
 
         self.listener = tf.TransformListener()
 
@@ -98,7 +151,6 @@ class TLDetector(object):
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
-        #pass
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
@@ -113,10 +165,10 @@ class TLDetector(object):
         """
 
         time_elapsed = timer() - self.last_img_processed 
-        #Do not process the camera image unless 20 milliseconds have passed from last processing
-        if (time_elapsed < CAMERA_IMG_PROCESS_RATE):
-            return
 
+        # Do not process the camera image unless 20 milliseconds have passed from last processing
+        if time_elapsed < CAMERA_IMG_PROCESS_RATE:
+            return
 
         self.has_image = True
         self.camera_image = msg
@@ -157,18 +209,14 @@ class TLDetector(object):
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
-            https://en.wikipedia.org/wiki/Closest_pair_of_points_problem
         Args:
-            pose (Pose): position to match a waypoint to
+            x: x position
+            y: y position
 
         Returns:
             int: index of the closest waypoint in self.waypoints
-
         """
-        #TODO implement
-        #return 0
-        closest_idx = self.waypoint_tree.query([x,y], 1)[1]
-        return closest_idx
+        return self.waypoint_tree.query([x, y], 1)[1]
 
     def get_light_state(self, light):
         """
@@ -178,18 +226,13 @@ class TLDetector(object):
         """
 
         # For test mode, just return the light state
-        if TEST_MODE_ENABLED:
+        if TEST_MODE_ENABLED or COLLECT_TD:
             classification = light.state
         else:
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
             # Get classification
-            classification = self.light_classifier.get_classification(cv_image)
-
-            # Save image (throttled)
-            if SAVE_IMAGES and (self.process_count % LOGGING_THROTTLE_FACTOR == 0):
-                save_file = "../../../imgs/{}-{:.0f}.jpeg".format(self.to_string(classification), (time.time() * 100))
-                cv2.imwrite(save_file, cv_image)
+            classification = self.classifier.get_classification(cv_image)
 
         return classification
 
@@ -217,11 +260,11 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
-        if(self.pose):
-            #car_position = self.get_closest_waypoint(self.pose.pose)
+        if self.pose:
+            # car_position = self.get_closest_waypoint(self.pose.pose)
             car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
-            #TODO find the closest visible traffic light (if one exists)
+            # TODO find the closest visible traffic light (if one exists)
             diff = len(self.waypoints.waypoints)
             for i, light in enumerate(self.lights):
                 # Get stop line waypoint index
@@ -234,15 +277,18 @@ class TLDetector(object):
                     closest_light = light
                     line_wp_idx = temp_wp_idx
 
-        if (closest_light) and ((line_wp_idx - car_wp_idx)  <= WAYPOINT_DIFFERENCE):
+        if closest_light and ((line_wp_idx - car_wp_idx) <= WAYPOINT_DIFFERENCE):
             self.process_count += 1
             state = self.get_light_state(closest_light)
+
             if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
                 rospy.logwarn("DETECT: line_wp_idx={}, state={}".format(line_wp_idx, self.to_string(state)))
+
             return line_wp_idx, state
         else:
-            #rospy.loginfo ("ptf: unknown state of traffic light")
+            # rospy.loginfo ("ptf: unknown state of traffic light")
             return -1, TrafficLight.UNKNOWN
+
 
 if __name__ == '__main__':
     try:

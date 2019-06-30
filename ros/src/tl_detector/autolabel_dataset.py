@@ -117,7 +117,6 @@ class TrafficLightClassifier(object):
         classes = output_dict['detection_classes']
         scores = output_dict['detection_scores']
 
-
         '''
         boxes, scores, classes, num = self.get_classification(img_expanded)
         boxes = np.squeeze(boxes)

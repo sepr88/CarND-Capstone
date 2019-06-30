@@ -1,11 +1,16 @@
-import sys
 import os
 from tl_utils import yes_or_no
 from sklearn.model_selection import train_test_split
 import glob
 from shutil import copyfile
-import numpy as np
 import xml.etree.ElementTree as ET
+import tensorflow as tf
+
+flags = tf.app.flags
+flags.DEFINE_string('input_path', '', 'Root directory to dataset.')
+flags.DEFINE_string('output_path', '', 'Root directory to output datasets.')
+flags.DEFINE_float('validation_size', 0.2, 'Root directory to output datasets.')
+FLAGS = flags.FLAGS
 
 
 def split_dataset(in_path, out_path, validation_size):
@@ -50,7 +55,7 @@ def split_dataset(in_path, out_path, validation_size):
 
     # read in training data
     labels_train, labels_test = train_test_split(glob.glob(in_label_path + '/*.xml'),
-                                                 test_size=np.float32(validation_size),
+                                                 test_size=validation_size,
                                                  shuffle=True)
 
     # save training data
@@ -62,8 +67,10 @@ def split_dataset(in_path, out_path, validation_size):
 
         label_name = label.split('/')[-1]
 
-        copyfile(os.path.join(in_img_path, image), os.path.join(train_img_path, image))
-        copyfile(label, os.path.join(train_label_path, label_name))
+        copy(img_src=os.path.join(in_img_path, image),
+             img_dst=os.path.join(train_img_path, image),
+             label_src=label,
+             label_dst=os.path.join(train_label_path, label_name))
 
     # save validation data
     for label in labels_test:
@@ -74,12 +81,29 @@ def split_dataset(in_path, out_path, validation_size):
 
         label_name = label.split('/')[-1]
 
-        copyfile(os.path.join(in_img_path, image), os.path.join(valid_img_path, image))
-        copyfile(label, os.path.join(valid_label_path, label_name))
+        copy(img_src=os.path.join(in_img_path, image),
+             img_dst=os.path.join(valid_img_path, image),
+             label_src=label,
+             label_dst=os.path.join(valid_label_path, label_name))
 
 
-input_path = sys.argv[1]
-output_path = sys.argv[2]
-validation_size = sys.argv[3]
+def copy(img_src, img_dst, label_src, label_dst):
 
-split_dataset(input_path, output_path, validation_size)
+    # copy files
+    copyfile(img_src, img_dst)
+    copyfile(label_src, label_dst)
+
+    # update path in label[.xml] file
+    tree = ET.parse(label_dst)
+    root = tree.getroot()
+    elem = root.find('path')
+    elem.text = img_dst
+    tree.write(label_dst)
+
+
+def main(_):
+    split_dataset(FLAGS.input_path, FLAGS.output_path, FLAGS.validation_size)
+
+
+if __name__ == '__main__':
+    tf.app.run()

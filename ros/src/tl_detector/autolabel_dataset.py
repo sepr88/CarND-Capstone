@@ -1,29 +1,37 @@
 import os
 import csv
-import sys
-import cv2
 import numpy as np
 import tensorflow as tf
 import xml.etree.cElementTree as ET
-import visualization_utils as vis_utils
 import label_map_util
 from PIL import Image
 from utils import ops as utils_ops
 import tl_utils
-from time import sleep
+from tensorflow import app
 
-PATH_TO_LABELS = '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/data/mscoco_label_map.pbtxt'
-PATH_TO_IMG = '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/examples/'
-PATH_TO_MODEL = '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/rfcn_resnet101_coco_2018_01_28/frozen_inference_graph.pb'
+
+flags = app.flags
+flags.DEFINE_string('path', '', 'Root directory to dataset.')
+flags.DEFINE_string('label_map_path',
+                    '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/data/mscoco_label_map.pbtxt',
+                    'Path to file containing the labels [.pbtxt]')
+flags.DEFINE_string('model_path',
+                    '/home/basti/Udacity/CarND-Capstone/ros/src/'
+                    'tl_detector/rfcn_resnet101_coco_2018_01_28/frozen_inference_graph.pb',
+                    'Path to the frozen inference graph [.pb]')
+flags.DEFINE_boolean('overwrite', True, 'Whether to overwrite existing annotations')
+
+FLAGS = flags.FLAGS
+
 
 class TrafficLightClassifier(object):
-    def __init__(self, base_path):
+    def __init__(self, base_path, label_map_path, model_path, overwrite):
 
         self.detection_graph = tf.Graph()
 
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
-            with tf.gfile.GFile(PATH_TO_MODEL, 'rb') as fid:
+            with tf.gfile.GFile(model_path, 'rb') as fid:
                 serialized_graph = fid.read()
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
@@ -35,20 +43,18 @@ class TrafficLightClassifier(object):
                 self.num_d = self.detection_graph.get_tensor_by_name('num_detections:0')
                 self.sess = tf.Session(graph=self.detection_graph)
 
-        self.category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS, use_display_name=True)
+        self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
 
         self.uid = 1
         self.base_path = base_path
         self.img_path = os.path.join(self.base_path, 'IMG')
         self.voc_path = os.path.join(self.base_path, 'voc-labels')
         self.csv_path = os.path.join(self.base_path, 'labels.csv')
-        self.overwrite = True
+        self.overwrite = overwrite
 
         # create new output path if doesnt exist
         if not os.path.exists(self.voc_path):
             os.mkdir(self.voc_path)
-        else:
-            self.overwrite = tl_utils.yes_or_no('Overwrite existing?')
 
         pass
 
@@ -233,7 +239,16 @@ def convert_to_pascal_voc(out_path, img_path, img_name, boxes, label, img_shape)
 
     tree.write(os.path.join(out_path, '{}.xml'.format(name)))
 
-path = sys.argv[1]
 
-classifier = TrafficLightClassifier(path)
-classifier.autolabel_dataset()
+def main(_):
+    classifier = TrafficLightClassifier(base_path=FLAGS.path,
+                                        label_map_path=FLAGS.label_map_path,
+                                        model_path=FLAGS.model_path,
+                                        overwrite=FLAGS.overwrite)
+
+    classifier.autolabel_dataset()
+
+
+if __name__ == '__main__':
+    tf.app.run()
+

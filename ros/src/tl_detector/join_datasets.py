@@ -1,9 +1,10 @@
-import sys
 import os
 import csv
 from os.path import join
 from shutil import copyfile
 import tensorflow as tf
+import glob
+import xml.etree.ElementTree as ET
 
 flags = tf.app.flags
 flags.DEFINE_string('input_path', '', 'Root directory containing all datasets to be joined.')
@@ -16,39 +17,68 @@ def get_immediate_subdirectories(a_dir):
             if os.path.isdir(os.path.join(a_dir, name))]
 
 
+def copy(img_src, img_dst, label_src, label_dst):
+
+    # copy files
+    copyfile(img_src, img_dst)
+    copyfile(label_src, label_dst)
+
+    # update path in label[.xml] file
+
+    tree = ET.parse(label_dst)
+    root = tree.getroot()
+    elem = root.find('path')
+    elem.text = img_dst
+    tree.write(label_dst)
+
+    img_name = img_dst.split('/')[-1].split('.')[0]
+    elem = root.find('filename')
+    elem.text = img_name
+    tree.write(label_dst)
+
+
 def join_datasets(input_path, output_path):
     uid = 1
 
     dirs = get_immediate_subdirectories(input_path)
 
     # create new structure in output path
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+
     out_img_path = join(output_path, 'IMG')
 
     if not os.path.exists(out_img_path):
         os.mkdir(out_img_path)
 
+    out_voc_path = join(output_path, 'voc-labels')
+
+    if not os.path.exists(out_voc_path):
+        os.mkdir(out_voc_path)
+
     # for each dataset inside the root directory
     for dataset in dirs:
         path = join(input_path, dataset)
         in_img_path = join(path, 'IMG')
+        in_voc_path = join(path, 'voc-labels')
 
-        # open csv
-        with open(join(path, 'labels.csv')) as in_csv:
-            with open(join(output_path, 'labels.csv'), 'a') as out_csv:
-                r = csv.reader(in_csv, delimiter=';')
+        annotations = glob.glob(in_voc_path + '/*.xml')
 
-                for line in r:
-                    in_img_name = line[0].split('/')[-1]
-                    file_ext = in_img_name.split('.')[-1]
-                    out_img_name = 'image{uid}.{ext}'.format(uid=uid, ext=file_ext)
-                    out_csv.write('{img_path};{label}\n'.format(img_path=join(out_img_path, out_img_name),
-                                                                label=line[1]))
+        for annotation in annotations:
+            tree = ET.parse(annotation)
+            root = tree.getroot()
 
-                    # copy and rename each images to the output path
-                    copyfile(join(in_img_path, in_img_name), join(out_img_path, out_img_name))
-                    uid += 1
+            in_img_path = root.find('path').text
 
-    return True
+            if not os.path.isfile(in_img_path):
+                raise Exception('{} does not exist'.format(in_img_path))
+
+            out_img_path_full = join(out_img_path, 'image{uid}.jpg'.format(uid=uid))
+            out_voc_path_full = join(out_voc_path, 'image{uid}.xml'.format(uid=uid))
+
+            copy(in_img_path, out_img_path_full, annotation, out_voc_path_full)
+
+            uid += 1
 
 
 def main(_):

@@ -15,6 +15,7 @@ import tl_utils
 import os
 import label_map_util
 import numpy as np
+import tf
 
 STATE_COUNT_THRESHOLD = 3
 TEST_MODE_ENABLED = True
@@ -24,7 +25,7 @@ WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = True
 TD_RATE = 5  # only save every i-th image
-TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-1'
+TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-3'
 TL_DEBUG = True
 
 
@@ -118,7 +119,7 @@ class TLDetector(object):
         self.bridge = CvBridge()
 
         # TODO: Switch classifier if on site
-        self.classifier = TLClassifier('frozen_inference_graph_sim_v1.4.pb')
+        # self.classifier = TLClassifier('frozen_inference_graph_sim_v1.4.pb')
 
         self.listener = tf.TransformListener()
 
@@ -181,9 +182,9 @@ class TLDetector(object):
         '''
         # Collect training data
         self.img_count += 1
-        if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0:
+        label = tl_utils.tl_state_to_label(state)
+        if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0 and (label == 'green' or label == 'yellow'):
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-            label = tl_utils.tl_state_to_label(state)
             tl_utils.save_td(uid=self.td_id, cv_image=cv_image, label=label, csv_path=self.td_base_path,
                              img_path=self.td_img_path)
             self.td_id += 1

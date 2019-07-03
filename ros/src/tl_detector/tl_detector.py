@@ -7,7 +7,7 @@ from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import tensorflow as tf
+import tensorflow
 import cv2
 import yaml
 from scipy.spatial import KDTree
@@ -18,34 +18,34 @@ import numpy as np
 import tf
 
 STATE_COUNT_THRESHOLD = 3
-TEST_MODE_ENABLED = True
+TEST_MODE_ENABLED = False
 LOGGING_THROTTLE_FACTOR = 5
 CAMERA_IMG_PROCESS_RATE = 0.20  # ms
 WAYPOINT_DIFFERENCE = 300
 
-COLLECT_TD = True
+COLLECT_TD = False
 TD_RATE = 5  # only save every i-th image
 TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-3'
-TL_DEBUG = True
+TL_DEBUG = False
 
 
 class TLClassifier(object):
     def __init__(self, model_path, label_map_path=None):
-        self.detection_graph = tf.Graph()
+        self.detection_graph = tensorflow.Graph()
 
         with self.detection_graph.as_default():
-            od_graph_def = tf.GraphDef()
-            with tf.gfile.GFile(model_path, 'rb') as fid:
+            od_graph_def = tensorflow.GraphDef()
+            with tensorflow.gfile.GFile(model_path, 'rb') as fid:
                 serialized_graph = fid.read()
                 od_graph_def.ParseFromString(serialized_graph)
-                tf.import_graph_def(od_graph_def, name='')
+                tensorflow.import_graph_def(od_graph_def, name='')
 
                 self.image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
                 self.d_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
                 self.d_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
                 self.d_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
                 self.num_d = self.detection_graph.get_tensor_by_name('num_detections:0')
-                self.sess = tf.Session(graph=self.detection_graph)
+                self.sess = tensorflow.Session(graph=self.detection_graph)
 
         self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
 
@@ -60,6 +60,9 @@ class TLClassifier(object):
                                                           feed_dict={self.image_tensor: img_expanded})
 
         classes = np.squeeze(classes)
+        scores = np.squeeze(scores)
+
+        print(classes)
 
         green = False
         for c in classes:
@@ -77,8 +80,8 @@ class TLClassifier(object):
 
     @staticmethod
     def load_image_into_numpy_array(image):
-        (im_width, im_height) = image.size
-        return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+        (im_width, im_height, channels) = image.shape
+        return np.array(image).reshape((im_height, im_width, 3)).astype(np.uint8)
 
 
 class TLDetector(object):
@@ -119,7 +122,8 @@ class TLDetector(object):
         self.bridge = CvBridge()
 
         # TODO: Switch classifier if on site
-        # self.classifier = TLClassifier('frozen_inference_graph_sim_v1.4.pb')
+        self.classifier = TLClassifier('/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb',
+                                       label_map_path='/home/basti/Udacity/CarND-Capstone/sim_datasets/tl_label_map.pbtxt')
 
         self.listener = tf.TransformListener()
 
@@ -183,7 +187,7 @@ class TLDetector(object):
         # Collect training data
         self.img_count += 1
         label = tl_utils.tl_state_to_label(state)
-        if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0 and (label == 'green' or label == 'yellow'):
+        if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0:
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
             tl_utils.save_td(uid=self.td_id, cv_image=cv_image, label=label, csv_path=self.td_base_path,
                              img_path=self.td_img_path)
@@ -283,7 +287,7 @@ class TLDetector(object):
             state = self.get_light_state(closest_light)
 
             if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
-                rospy.logwarn("DETECT: line_wp_idx={}, state={}".format(line_wp_idx, self.to_string(state)))
+                rospy.logwarn("Traffic Light: line_wp_idx={}, state={}".format(line_wp_idx, self.to_string(state)))
 
             return line_wp_idx, state
         else:

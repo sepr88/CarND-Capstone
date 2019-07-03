@@ -31,7 +31,7 @@ def copy(img_src, img_dst, label_src, label_dst):
     elem.text = img_dst
     tree.write(label_dst)
 
-    img_name = img_dst.split('/')[-1].split('.')[0]
+    img_name = img_dst.split('/')[-1]
     elem = root.find('filename')
     elem.text = img_name
     tree.write(label_dst)

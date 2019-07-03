@@ -11,8 +11,7 @@ import tl_utils
 
 flags = tf.app.flags
 flags.DEFINE_string('model',
-                    '/home/basti/tools/models/research/object_detection/training/fined_tuned_model/'
-                    'frozen_inference_graph.pb',
+                    '/home/basti/tools/models/research/object_detection/training/fined_tuned_model/frozen_inference_graph.pb',
                     'Path pointing to the frozen inference graph (.pb)')
 
 flags.DEFINE_string('label_map',
@@ -130,7 +129,7 @@ class TrafficLightClassifier(object):
                                                                           scores=scores,
                                                                           category_index=self.category_index,
                                                                           use_normalized_coordinates=True,
-                                                                          line_thickness=10)
+                                                                          line_thickness=5)
 
             vis_utils.save_image_array_as_png(out_img, os.path.join(self.output_path, 'image{}.png'.format(uid)))
             uid += 1

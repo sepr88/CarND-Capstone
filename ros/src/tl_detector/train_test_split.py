@@ -65,6 +65,9 @@ def split_dataset(in_path, out_path, validation_size):
         elem = root.find('filename')
         image = elem.text
 
+        if not image.endswith('.jpg'):
+            image += '.jpg'
+
         label_name = label.split('/')[-1]
 
         copy(img_src=os.path.join(in_img_path, image),
@@ -78,6 +81,9 @@ def split_dataset(in_path, out_path, validation_size):
         root = tree.getroot()
         elem = root.find('filename')
         image = elem.text
+
+        if not image.endswith('.jpg'):
+            image += '.jpg'
 
         label_name = label.split('/')[-1]
 
@@ -98,6 +104,11 @@ def copy(img_src, img_dst, label_src, label_dst):
     root = tree.getroot()
     elem = root.find('path')
     elem.text = img_dst
+    tree.write(label_dst)
+
+    img_name = img_dst.split('/')[-1]
+    elem = root.find('filename')
+    elem.text = img_name
     tree.write(label_dst)
 
 

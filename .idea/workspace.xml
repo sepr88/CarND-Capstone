@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c01730b2-e2cc-452a-ab94-e5c0255e0532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Untitled-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Untitled.ipynb" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,14 +21,34 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
-              <caret line="55" column="40" lean-forward="true" selection-start-line="55" selection-start-column="40" selection-end-line="55" selection-end-column="40" />
+            <state relative-caret-position="450">
+              <caret line="36" column="25" selection-start-line="36" selection-start-column="25" selection-end-line="36" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="584">
+              <caret line="131" column="90" selection-start-line="131" selection-start-column="90" selection-end-line="131" selection-end-column="90" />
               <folding>
-                <element signature="e#1#10#0" expanded="true" />
-                <element signature="e#567#948#0" />
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="660">
+              <caret line="134" column="28" lean-forward="true" selection-start-line="134" selection-start-column="28" selection-end-line="134" selection-end-column="28" />
+              <folding>
+                <element signature="e#22#34#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -32,8 +57,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="564">
-              <caret line="89" selection-start-line="89" selection-end-line="100" selection-end-column="25" />
+            <state relative-caret-position="1575">
+              <caret line="111" column="25" selection-start-line="111" selection-start-column="25" selection-end-line="111" selection-end-column="25" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -67,13 +92,13 @@
         <option value="$PROJECT_DIR$/ros/src/twist_controller/dbw_node.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/utils/label_map_util.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py" />
-        <option value="$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/create_pascal_tf_record.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/test_classifier.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/autolabel_dataset.py" />
+        <option value="$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py" />
+        <option value="$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" />
-        <option value="$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py" />
       </list>
     </option>
   </component>
@@ -91,6 +116,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -128,7 +154,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -280,10 +305,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="36" column="25" selection-start-line="36" selection-start-column="25" selection-end-line="36" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1575">
+          <caret line="111" column="25" selection-start-line="111" selection-start-column="25" selection-end-line="111" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="38" column="38" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
+        <state relative-caret-position="584">
+          <caret line="131" column="90" selection-start-line="131" selection-start-column="90" selection-end-line="131" selection-end-column="90" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -292,32 +334,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="174" column="31" lean-forward="true" selection-start-line="174" selection-start-column="31" selection-end-line="174" selection-end-column="31" />
+        <state relative-caret-position="660">
+          <caret line="134" column="28" lean-forward="true" selection-start-line="134" selection-start-column="28" selection-end-line="134" selection-end-column="28" />
           <folding>
             <element signature="e#22#34#0" expanded="true" />
-            <element signature="e#784#2942#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="564">
-          <caret line="89" selection-start-line="89" selection-end-line="100" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="55" column="40" lean-forward="true" selection-start-line="55" selection-start-column="40" selection-end-line="55" selection-end-column="40" />
-          <folding>
-            <element signature="e#1#10#0" expanded="true" />
-            <element signature="e#567#948#0" />
           </folding>
         </state>
       </provider>

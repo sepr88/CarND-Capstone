@@ -4,7 +4,6 @@ from styx_msgs.msg import TrafficLight
 from utils import label_map_util
 from utils import ops as utils_ops
 import cv2
-from timeit import default_timer as timer
 
 
 class TLClassifier(object):
@@ -40,14 +39,7 @@ class TLClassifier(object):
     def get_classification(self, img):
 
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # img = TLClassifier.load_image_into_numpy_array(img)
         img_expanded = np.expand_dims(img_rgb, axis=0)
-
-        # output_dict = TLClassifier.run_inference_for_single_image(img_expanded, self.detection_graph)
-
-        # boxes = output_dict['detection_boxes']
-        # classes = output_dict['detection_classes']
-        # scores = output_dict['detection_scores']
 
         with self.detection_graph.as_default():
             (boxes, scores, classes, num) = self.sess.run(
@@ -66,7 +58,6 @@ class TLClassifier(object):
                     class_name = self.category_index[classes[i]]['name']
 
         return self.dict[class_name]
-
 
     @staticmethod
     def run_inference_for_single_image(image, graph):
@@ -118,5 +109,10 @@ class TLClassifier(object):
 
     @staticmethod
     def load_image_into_numpy_array(image):
-        (im_width, im_height, _) = image.shape
+        try:
+            (im_width, im_height, _) = image.shape
+        except AttributeError:
+            image = np.array(image)
+            (im_width, im_height, _) = image.shape
+
         return np.array(image).reshape((im_height, im_width, 3)).astype(np.uint8)

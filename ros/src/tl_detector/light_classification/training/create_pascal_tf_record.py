@@ -27,7 +27,6 @@ from __future__ import print_function
 
 import hashlib
 import io
-import logging
 import os
 import glob
 
@@ -41,22 +40,10 @@ from utils import label_map_util
 
 flags = tf.app.flags
 flags.DEFINE_string('data_dir', '', 'Root directory to dataset.')
-flags.DEFINE_string('set', '', 'Name of the set')
-
-flags.DEFINE_string('annotations_dir', 'Annotations', 'path to annotations directory.')
-
-# flags.DEFINE_string('year', 'VOC2007', 'Desired challenge year.')
-
 flags.DEFINE_string('output_path', '', 'Path to output TFRecord')
-
 flags.DEFINE_string('label_map_path', '', 'Path to label map proto (*.pbtxt)')
-
 flags.DEFINE_boolean('ignore_difficult_instances', False, 'Whether to ignore difficult instances')
-
 FLAGS = flags.FLAGS
-
-# SETS = ['train', 'val', 'trainval', 'test']
-# YEARS = ['VOC2007', 'VOC2012', 'merged']
 
 
 def dict_to_tf_example(data,
@@ -162,13 +149,13 @@ def dict_to_tf_example(data,
 def main(_):
 
     data_dir = FLAGS.data_dir
-    annotations_dir = os.path.join(FLAGS.annotations_dir)
+    annotations_dir = os.path.join(data_dir, 'labels')
 
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
 
     label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)
 
-    img_path = os.path.join(data_dir, FLAGS.set, 'img')
+    img_path = os.path.join(data_dir, 'img')
     examples_list = glob.glob(img_path + '/*.jpg')
 
     # examples_list = dataset_util.read_examples_list(examples_path)
@@ -185,7 +172,7 @@ def main(_):
             data = dataset_util.recursive_parse_xml_to_dict(xml)['annotation']
 
             tf_example = dict_to_tf_example(data=data,
-                                            dataset_directory=os.path.join(FLAGS.data_dir, FLAGS.set),
+                                            dataset_directory=os.path.join(data_dir),
                                             label_map_dict=label_map_dict,
                                             ignore_difficult_instances=FLAGS.ignore_difficult_instances,
                                             image_subdirectory='img')

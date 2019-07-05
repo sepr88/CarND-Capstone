@@ -6,3 +6,8 @@ setup_args = generate_distutils_setup(
 	package_dir={'': 'src'})
 
 setup(**setup_args)
+
+setup_args = generate_distutils_setup(
+	packages=['light_classification'])
+
+setup(**setup_args)

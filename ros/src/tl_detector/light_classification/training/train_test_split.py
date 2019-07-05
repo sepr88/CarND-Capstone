@@ -1,5 +1,5 @@
 import os
-from tl_utils import yes_or_no
+from utils.tl_utils import yes_or_no, copy_img_label
 from sklearn.model_selection import train_test_split
 import glob
 from shutil import copyfile
@@ -70,10 +70,10 @@ def split_dataset(in_path, out_path, validation_size):
 
         label_name = label.split('/')[-1]
 
-        copy(img_src=os.path.join(in_img_path, image),
-             img_dst=os.path.join(train_img_path, image),
-             label_src=label,
-             label_dst=os.path.join(train_label_path, label_name))
+        copy_img_label(img_src=os.path.join(in_img_path, image),
+                       img_dst=os.path.join(train_img_path, image),
+                       label_src=label,
+                       label_dst=os.path.join(train_label_path, label_name))
 
     # save validation data
     for label in labels_test:
@@ -87,29 +87,10 @@ def split_dataset(in_path, out_path, validation_size):
 
         label_name = label.split('/')[-1]
 
-        copy(img_src=os.path.join(in_img_path, image),
-             img_dst=os.path.join(valid_img_path, image),
-             label_src=label,
-             label_dst=os.path.join(valid_label_path, label_name))
-
-
-def copy(img_src, img_dst, label_src, label_dst):
-
-    # copy files
-    copyfile(img_src, img_dst)
-    copyfile(label_src, label_dst)
-
-    # update path in label[.xml] file
-    tree = ET.parse(label_dst)
-    root = tree.getroot()
-    elem = root.find('path')
-    elem.text = img_dst
-    tree.write(label_dst)
-
-    img_name = img_dst.split('/')[-1]
-    elem = root.find('filename')
-    elem.text = img_name
-    tree.write(label_dst)
+        copy_img_label(img_src=os.path.join(in_img_path, image),
+                       img_dst=os.path.join(valid_img_path, image),
+                       label_src=label,
+                       label_dst=os.path.join(valid_label_path, label_name))
 
 
 def main(_):

@@ -6,9 +6,8 @@ import xml.etree.cElementTree as ET
 import label_map_util
 from PIL import Image
 from utils import ops as utils_ops
-import tl_utils
+from utils import tl_utils
 from tensorflow import app
-
 
 flags = app.flags
 flags.DEFINE_string('path', '', 'Root directory to dataset.')

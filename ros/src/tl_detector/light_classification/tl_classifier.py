@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from styx_msgs.msg import TrafficLight
-import label_map_util
+from utils import label_map_util
 from utils import ops as utils_ops
 import cv2
 from timeit import default_timer as timer

@@ -9,7 +9,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import yaml
 from scipy.spatial import KDTree
-import tl_utils
+from utils import tl_utils
 import os
 import tf
 from light_classification.tl_classifier import TLClassifier

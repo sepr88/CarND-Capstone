@@ -2,11 +2,177 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c01730b2-e2cc-452a-ab94-e5c0255e0532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/autolabel_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/anchor_generator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/balanced_positive_negative_sampler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/balanced_positive_negative_sampler_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/batch_multiclass_nms_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/batcher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/batcher_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_coder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_coder_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_list.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_list_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_list_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_list_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/box_predictor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/class_agnostic_nms_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/data_decoder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/data_parser.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/freezable_batch_norm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/freezable_batch_norm_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/keypoint_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/keypoint_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/losses.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/losses_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/matcher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/matcher_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/minibatch_sampler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/minibatch_sampler_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/multiclass_nms_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/post_processing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/prefetcher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/prefetcher_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/preprocessor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/preprocessor_cache.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/preprocessor_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/region_similarity_calculator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/region_similarity_calculator_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/standard_fields.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/target_assigner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/core/target_assigner_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/create_pascal_tf_record.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/join_datasets.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/label_map_util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/light_classification/label_map_util.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/anchor_generator.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/anchor_generator_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/argmax_matcher.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/argmax_matcher_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/bipartite_matcher.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/bipartite_matcher_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/box_coder.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/box_coder_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/box_predictor.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/box_predictor_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/calibration.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/calibration_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/eval.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/eval_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/faster_rcnn.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/faster_rcnn_box_coder.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/faster_rcnn_box_coder_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/faster_rcnn_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/flexible_grid_anchor_generator.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/flexible_grid_anchor_generator_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/graph_rewriter.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/graph_rewriter_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/grid_anchor_generator.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/grid_anchor_generator_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/hyperparams.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/hyperparams_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/image_resizer.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/image_resizer_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/input_reader.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/input_reader_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/keypoint_box_coder.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/keypoint_box_coder_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/losses.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/losses_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/matcher.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/matcher_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/mean_stddev_box_coder.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/mean_stddev_box_coder_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/model.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/model_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/multiscale_anchor_generator.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/multiscale_anchor_generator_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/optimizer.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/optimizer_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/pipeline.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/pipeline_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/post_processing.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/post_processing_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/preprocessor.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/preprocessor_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/region_similarity_calculator.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/region_similarity_calculator_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/square_box_coder.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/square_box_coder_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/ssd.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/ssd_anchor_generator.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/ssd_anchor_generator_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/ssd_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/string_int_label_map.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/string_int_label_map_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/train.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/protos/train_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py" beforeDir="false" afterPath="$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/category_util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/category_util_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/config_util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/config_util_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/context_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/context_manager_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/dataset_util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/dataset_util_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/json_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/json_utils_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/label_map_util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/label_map_util_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/learning_schedules.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/learning_schedules_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/metrics.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/metrics_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/model_util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/model_util_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_list.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_list_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_list_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_list_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_mask_list.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_mask_list_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_mask_list_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_mask_list_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_box_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_mask_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/np_mask_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/object_detection_evaluation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/object_detection_evaluation_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/per_image_evaluation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/per_image_evaluation_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/per_image_vrd_evaluation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/per_image_vrd_evaluation_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/shape_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/shape_utils_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/spatial_transform_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/spatial_transform_ops_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/static_shape.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/static_shape_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/test_case.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/test_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/test_utils_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/variables_helper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/variables_helper_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/visualization_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/visualization_utils_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/vrd_evaluation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/utils/vrd_evaluation_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ros/src/tl_detector/visualization_utils.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,38 +185,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/train_test_split.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="434">
-              <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
-              <folding>
-                <element signature="e#22#34#0" expanded="true" />
-                <element signature="e#5683#5959#0" />
-                <element signature="e#6007#6569#0" />
-              </folding>
+            <state relative-caret-position="165">
+              <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="28" column="9" selection-start-line="28" selection-start-column="9" selection-end-line="28" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-                <element signature="e#2138#5013#0" />
-              </folding>
+            <state relative-caret-position="45">
+              <caret line="3" column="11" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -79,7 +238,6 @@
         <option value="$PROJECT_DIR$/ros/src/tl_detector/visualization_utils.py" />
         <option value="$PROJECT_DIR$/ros/src/twist_controller/dbw_node.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/utils/label_map_util.py" />
-        <option value="$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/create_pascal_tf_record.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/test_classifier.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/autolabel_dataset.py" />
@@ -89,9 +247,12 @@
         <option value="$PROJECT_DIR$/ros/src/tl_detector/temp.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/__init__.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/setup.py" />
-        <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py" />
         <option value="$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py" />
+        <option value="$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py" />
+        <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/autolabel_dataset.py" />
+        <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/test_classifier.py" />
         <option value="$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py" />
+        <option value="$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py" />
       </list>
     </option>
   </component>
@@ -109,7 +270,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -140,12 +300,14 @@
               <item name="CarND-Capstone" type="462c0819:PsiDirectoryNode" />
               <item name="ros" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="waypoint_updater" type="462c0819:PsiDirectoryNode" />
+              <item name="tl_detector" type="462c0819:PsiDirectoryNode" />
+              <item name="light_classification" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -217,10 +379,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="64" y="-4" width="1857" height="1085" extended-state="6" />
+    <frame x="64" y="-4" width="1537" height="1029" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23362446" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2771164" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -251,13 +413,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="196">
           <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="21" column="40" lean-forward="true" selection-start-line="21" selection-start-column="40" selection-end-line="21" selection-end-column="40" />
         </state>
       </provider>
     </entry>
@@ -293,8 +448,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/train_test_split.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1575">
-          <caret line="111" column="25" selection-start-line="111" selection-start-column="25" selection-end-line="111" selection-end-column="25" />
+        <state relative-caret-position="843">
+          <caret line="120" selection-start-line="120" selection-end-line="120" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
@@ -319,19 +474,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-            <element signature="e#2400#5189#0" />
-            <element signature="e#5261#5388#0" />
-            <element signature="e#5417#6771#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ros/launch/styx.launch">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -346,17 +488,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#2138#5013#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
@@ -364,15 +495,85 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/test_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="37" selection-start-line="31" selection-start-column="37" selection-end-line="31" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#1110#6771#0" />
+            <element signature="e#6791#7069#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/autolabel_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="26" lean-forward="true" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/create_pascal_tf_record.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#960#998#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/join_datasets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#567#944#0" />
+            <element signature="e#995#2231#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/test_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/training/train_test_split.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="434">
-          <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
-          <folding>
-            <element signature="e#22#34#0" expanded="true" />
-            <element signature="e#5683#5959#0" />
-            <element signature="e#6007#6569#0" />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_classification/tl_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="11" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
         </state>
       </provider>
     </entry>

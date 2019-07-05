@@ -4,6 +4,10 @@ import cv2
 from os.path import join
 from styx_msgs.msg import TrafficLight
 import sys
+import xml.etree.cElementTree as ET
+import numpy as np
+import os
+from shutil import copyfile
 
 
 def save_td(uid, cv_image, label, csv_path, img_path):
@@ -64,6 +68,7 @@ def print_progress(iteration, total, prefix='', suffix='', decimals=1, bar_lengt
         sys.stdout.write('\n')
     sys.stdout.flush()
 
+
 def yes_or_no(question):
     reply = str(raw_input(question + ' (y/n): ')).lower().strip()
     if reply[0] == 'y':
@@ -72,3 +77,68 @@ def yes_or_no(question):
         return False
     else:
         return yes_or_no(question)
+
+
+def convert_to_pascal_voc(out_path, img_path, img_name, boxes, label, img_shape):
+
+    annotation = ET.Element("annotation")
+
+    ET.SubElement(annotation, "folder").text = img_path.split('/')[-1]
+    ET.SubElement(annotation, "filename").text = img_name
+
+    ET.SubElement(annotation, "path").text = str(os.path.join(img_path, img_name))
+
+    source = ET.SubElement(annotation, "source")
+    ET.SubElement(source, "database").text = "Unknown"
+
+    size = ET.SubElement(annotation, "size")
+    ET.SubElement(size, "width").text = str(img_shape[1])
+    ET.SubElement(size, "height").text = str(img_shape[0])
+    ET.SubElement(size, "depth").text = str(img_shape[2])
+    ET.SubElement(annotation, "segmented").text = "0"
+
+    for box in boxes:
+        obj_elem = ET.SubElement(annotation, "object")
+
+        ET.SubElement(obj_elem, "name").text = str(label)
+        ET.SubElement(obj_elem, "pose").text = "Unspecified"
+        ET.SubElement(obj_elem, "truncated").text = "0"
+        ET.SubElement(obj_elem, "difficult").text = "0"
+
+        bndbox = ET.SubElement(obj_elem, "bndbox")
+
+        ET.SubElement(bndbox, "ymin").text = str(np.uint32(box[0] * img_shape[0]))
+        ET.SubElement(bndbox, "xmin").text = str(np.uint32(box[1] * img_shape[1]))
+        ET.SubElement(bndbox, "ymax").text = str(np.uint32(box[2] * img_shape[0]))
+        ET.SubElement(bndbox, "xmax").text = str(np.uint32(box[3] * img_shape[1]))
+
+    tree = ET.ElementTree(annotation)
+
+    name = img_name.split('.')[0]
+
+    tree.write(os.path.join(out_path, '{}.xml'.format(name)))
+
+
+def get_immediate_subdirectories(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
+
+
+def copy_img_label(img_src, img_dst, label_src, label_dst):
+
+    # copy files
+    copyfile(img_src, img_dst)
+    copyfile(label_src, label_dst)
+
+    # update path in label[.xml] file
+
+    tree = ET.parse(label_dst)
+    root = tree.getroot()
+    elem = root.find('path')
+    elem.text = img_dst
+    tree.write(label_dst)
+
+    img_name = img_dst.split('/')[-1]
+    elem = root.find('filename')
+    elem.text = img_name
+    tree.write(label_dst)

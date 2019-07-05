@@ -7,81 +7,23 @@ from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import tensorflow
-import cv2
 import yaml
 from scipy.spatial import KDTree
-import tl_utils
+from utils import tl_utils
 import os
-import label_map_util
-import numpy as np
 import tf
+from light_classification.tl_classifier import TLClassifier
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 2
 TEST_MODE_ENABLED = False
-LOGGING_THROTTLE_FACTOR = 5
-CAMERA_IMG_PROCESS_RATE = 0.20  # ms
+LOGGING_THROTTLE_FACTOR = 2
+CAMERA_IMG_PROCESS_RATE = .8  # ms
 WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = False
 TD_RATE = 5  # only save every i-th image
 TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-3'
 TL_DEBUG = False
-
-
-class TLClassifier(object):
-    def __init__(self, model_path, label_map_path=None):
-        self.detection_graph = tensorflow.Graph()
-
-        with self.detection_graph.as_default():
-            od_graph_def = tensorflow.GraphDef()
-            with tensorflow.gfile.GFile(model_path, 'rb') as fid:
-                serialized_graph = fid.read()
-                od_graph_def.ParseFromString(serialized_graph)
-                tensorflow.import_graph_def(od_graph_def, name='')
-
-                self.image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
-                self.d_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
-                self.d_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
-                self.d_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
-                self.num_d = self.detection_graph.get_tensor_by_name('num_detections:0')
-                self.sess = tensorflow.Session(graph=self.detection_graph)
-
-        self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
-
-    def get_classification(self, img):
-
-        img = TLClassifier.load_image_into_numpy_array(img)
-        img_expanded = np.expand_dims(img, axis=0)
-
-        with self.detection_graph.as_default():
-            # Expand dimension since the model expects image to have shape [1, None, None, 3].
-            (boxes, scores, classes, num) = self.sess.run([self.d_boxes, self.d_scores, self.d_classes, self.num_d],
-                                                          feed_dict={self.image_tensor: img_expanded})
-
-        classes = np.squeeze(classes)
-        scores = np.squeeze(scores)
-
-        print(classes)
-
-        green = False
-        for c in classes:
-            if c == 1:
-                return TrafficLight.RED
-            if c == 2:
-                return TrafficLight.YELLOW
-            if c == 3:
-                green = True
-
-        if green:
-            return TrafficLight.GREEN
-        else:
-            return TrafficLight.UNKNOWN
-
-    @staticmethod
-    def load_image_into_numpy_array(image):
-        (im_width, im_height, channels) = image.shape
-        return np.array(image).reshape((im_height, im_width, 3)).astype(np.uint8)
 
 
 class TLDetector(object):
@@ -180,6 +122,7 @@ class TLDetector(object):
 
         self.last_img_processed = timer()
         light_wp, state = self.process_traffic_lights()
+        print(timer() - self.last_img_processed)
 
         '''
         Collect Training Data

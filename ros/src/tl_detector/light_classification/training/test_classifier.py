@@ -2,11 +2,12 @@ import tensorflow as tf
 import numpy as np
 import glob
 from PIL import Image
-import visualization_utils as vis_utils
-import os
+from utils import visualization_utils as vis_utils
 from utils import ops as utils_ops
-import label_map_util
-import tl_utils
+from utils import label_map_util
+from utils import tl_utils
+import os
+
 
 
 flags = tf.app.flags

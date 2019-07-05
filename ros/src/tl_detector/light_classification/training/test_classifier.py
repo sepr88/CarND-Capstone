@@ -3,10 +3,11 @@ import numpy as np
 import glob
 from PIL import Image
 from utils import visualization_utils as vis_utils
-import os
 from utils import ops as utils_ops
 from utils import label_map_util
-from tl_detector import tl_utils
+from utils import tl_utils
+import os
+
 
 
 flags = tf.app.flags

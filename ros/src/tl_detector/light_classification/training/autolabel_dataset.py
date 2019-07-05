@@ -12,7 +12,8 @@ from tensorflow import app
 flags = app.flags
 flags.DEFINE_string('path', '', 'Root directory to dataset.')
 flags.DEFINE_string('label_map_path',
-                    '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/data/mscoco_label_map.pbtxt',
+                    '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/light_classification/'
+                    'training/mscoco_label_map.pbtxt',
                     'Path to file containing the labels [.pbtxt]')
 flags.DEFINE_string('model_path',
                     '/home/basti/Udacity/CarND-Capstone/ros/src/'

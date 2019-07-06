@@ -1,5 +1,7 @@
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
+# Simulator
+Video available [here](https://youtu.be/eOcRwx-1ZvY).
 
 # Worklow: Create your training data for the Simulator
 
@@ -42,10 +44,14 @@ Useful shortcuts:
 Download *LabelImg* [here](https://github.com/tzutalin/labelImg).
 
 ## Split the Dataset into Training and Validation Data
-Run `python <path>/ros/src/tl_detector/train_test_split.py --[OPTIONS]`. This creates a new folder containing two datatsets `train_set` and `validation_set` 
+Run `python <path>/ros/src/tl_detector/light_classification/training/train_test_split.py --[OPTIONS]`. This creates a new folder containing two datatsets `train_set` and `validation_set` 
+
+Hint: run `python train_test_split.py -h` to list available options.
 
 ## Convert the Training and Validation Data to TFRecord
-Run `python <path>/ros/src/tl_detector/create_pascal_tf_record.py --[OPTIONS]`
+Run `python <path>/ros/src/tl_detector/light_classification/training/create_pascal_tf_record.py --[OPTIONS]`
+
+Hint: run `python create_pascal_tf_record.py -h` to list available options.
  
 
 

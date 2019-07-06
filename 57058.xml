@@ -1,0 +1,34 @@
+<annotaion>
+  <folder>Pascal_Voc</folder>
+  <filename>57058.jpg</filename>
+  <size>
+    <width>1280</width>
+    <height>720</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>Red</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>125.7231604824</xmin>
+      <ymin>287.1471490007</ymin>
+      <xmax>140.2452731942</xmax>
+      <ymax>312.4555852231</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>RedLeft</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>383.7076212983</xmin>
+      <ymin>257.8928460996</ymin>
+      <xmax>399.345953546</xmax>
+      <ymax>294.4194307293</ymax>
+    </bndbox>
+  </object>
+</annotaion>

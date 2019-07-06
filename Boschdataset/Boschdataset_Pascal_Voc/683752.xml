@@ -1,0 +1,22 @@
+<annotaion>
+  <folder>Pascal_Voc</folder>
+  <filename>683752.jpg</filename>
+  <size>
+    <width>1280</width>
+    <height>720</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>off</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>381.1818779151</xmin>
+      <ymin>267.1402882562</ymin>
+      <xmax>392.1963706688</xmax>
+      <ymax>284.0291771451</ymax>
+    </bndbox>
+  </object>
+</annotaion>

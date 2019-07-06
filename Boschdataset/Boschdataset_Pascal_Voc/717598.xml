@@ -1,0 +1,34 @@
+<annotaion>
+  <folder>Pascal_Voc</folder>
+  <filename>717598.jpg</filename>
+  <size>
+    <width>1280</width>
+    <height>720</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>Green</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>611.9207492206</xmin>
+      <ymin>310.91900164</ymin>
+      <xmax>616.2204234877</xmax>
+      <ymax>316.9891300171</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>Green</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>607.8739969692</xmin>
+      <ymin>322.300492347</ymin>
+      <xmax>611.6678272049</xmax>
+      <ymax>326.3472445984</ymax>
+    </bndbox>
+  </object>
+</annotaion>

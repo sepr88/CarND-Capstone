@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
 from styx_msgs.msg import TrafficLight
-from utils import label_map_util
-from utils import ops as utils_ops
+from src.utils import label_map_util
+from src.utils import ops as utils_ops
 import cv2
 
 

@@ -9,7 +9,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import yaml
 from scipy.spatial import KDTree
-from utils import tl_utils
+from src.utils import tl_utils
 import os
 import tf
 from light_classification.tl_classifier import TLClassifier
@@ -58,14 +58,18 @@ class TLDetector(object):
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
+	
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
 
         # TODO: Switch classifier if on site
-        self.classifier = TLClassifier('/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb',
-                                       label_map_path='/home/basti/Udacity/CarND-Capstone/sim_datasets/tl_label_map.pbtxt')
+	if self.config["is_site"] == False:
+        	self.classifier = TLClassifier('/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb', label_map_path='/home/basti/Udacity/CarND-Capstone/sim_datasets/tl_label_map.pbtxt')
+	else:	
+		# TODO: Put here the site classifier        	
+		self.classifier = TLClassifier('/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb', label_map_path='/home/basti/Udacity/CarND-Capstone/sim_datasets/tl_label_map.pbtxt')	
 
         self.listener = tf.TransformListener()
 

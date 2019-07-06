@@ -17,7 +17,7 @@
 
 import tensorflow as tf
 
-from utils import static_shape
+from src.utils import static_shape
 
 
 get_dim_as_int = static_shape.get_dim_as_int

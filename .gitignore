@@ -5,6 +5,7 @@
 *.mp4
 *.avi
 *.ckpt
+*.pyc
 sim_datasets/
 joined/
 split/

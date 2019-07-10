@@ -22,7 +22,7 @@ WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = False
 TD_RATE = 5  # only save every i-th image
-TD_PATH = '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-3'
+TD_PATH = '../../../data'
 TL_DEBUG = False
 
 
@@ -64,8 +64,11 @@ class TLDetector(object):
         self.bridge = CvBridge()
 
         # TODO: Switch classifier if on site
-        self.classifier = TLClassifier('/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb',
-                                       label_map_path='/home/basti/Udacity/CarND-Capstone/sim_datasets/tl_label_map.pbtxt')
+	if self.config["is_site"] == False:
+        	self.classifier = TLClassifier(TD_PATH +'/sim_frozen_inference_graph.pb', label_map_path=TD_PATH + '/tl_label_map.pbtxt')
+	else:	
+		# TODO: Put here the site classifier        	
+		self.classifier = TLClassifier(TD_PATH + '/site_frozen_inference_graph.pb', label_map_path= TD_PATH + '/tl_label_map.pbtxt')	
 
         self.listener = tf.TransformListener()
 

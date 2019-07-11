@@ -12,7 +12,7 @@ import os
 
 flags = tf.app.flags
 flags.DEFINE_string('model',
-                    '/home/basti/tools/models/research/object_detection/training/fined_tuned_model/frozen_inference_graph.pb',
+                    '/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb',
                     'Path pointing to the frozen inference graph (.pb)')
 
 flags.DEFINE_string('label_map',

@@ -1,0 +1,16 @@
+item {
+  name: "red"
+  id: 1
+  display_name: "Red Traffic Light"
+}
+item {
+  name: "yellow"
+  id: 2
+  display_name: "Yellow Traffic Light"
+}
+item {
+  name: "green"
+  id: 3
+  display_name: "Green Traffic Light"
+}
+

@@ -4,10 +4,11 @@ from styx_msgs.msg import TrafficLight
 from utils import label_map_util
 from utils import ops as utils_ops
 import cv2
+from collections import Counter
 
 
 class TLClassifier(object):
-    def __init__(self, model_path, label_map_path, min_score=0.9):
+    def __init__(self, model_path, label_map_path, min_score=0.75):
         self.detection_graph = tf.Graph()
         self.min_score = min_score
 
@@ -47,17 +48,29 @@ class TLClassifier(object):
                  self.d_classes, self.num_d],
                 feed_dict={self.image_tensor: img_expanded})
 
-        boxes = np.squeeze(boxes)
+        # boxes = np.squeeze(boxes)
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
 
-        class_name = 'unknown'
-        for i in range(boxes.shape[0]):
-            if scores[i] > self.min_score:
-                if classes[i] in self.category_index.keys():
-                    class_name = self.category_index[classes[i]]['name']
+        detected_lights = [i[0] for i in zip(classes, scores) if i[1] > self.min_score]
+        votes = Counter(detected_lights)
+        dict = {}
 
-        return self.dict[class_name]
+        for value in votes.values():
+            dict[value] = []
+
+            for (key, value) in votes.iteritems():
+                dict[value].append(key)
+
+        max_vote = sorted(dict.keys(), reverse=True)[0]
+
+        # class_name = 'unknown'
+        # for i in range(boxes.shape[0]):
+        #     if scores[i] > self.min_score:
+        #         # if classes[i] in self.category_index.keys():
+        #         class_name = self.category_index[classes[i]]['name']
+
+        return self.dict[self.category_index[dict[max_vote][0]]['name']]
 
     @staticmethod
     def run_inference_for_single_image(image, graph):

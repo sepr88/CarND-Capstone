@@ -16,7 +16,7 @@ from light_classification.tl_classifier import TLClassifier
 
 STATE_COUNT_THRESHOLD = 2
 TEST_MODE_ENABLED = False
-LOGGING_THROTTLE_FACTOR = 2
+LOGGING_THROTTLE_FACTOR = 1
 CAMERA_IMG_PROCESS_RATE = .8  # ms
 WAYPOINT_DIFFERENCE = 300
 
@@ -54,7 +54,6 @@ class TLDetector(object):
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
 
         sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
-        # sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=2*52428800)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -63,12 +62,13 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
 
-        # TODO: Switch classifier if on site
-	if self.config["is_site"] == False:
-        	self.classifier = TLClassifier(TD_PATH +'/sim_frozen_inference_graph.pb', label_map_path=TD_PATH + '/tl_label_map.pbtxt')
-	else:	
-		# TODO: Put here the site classifier        	
-		self.classifier = TLClassifier(TD_PATH + '/site_frozen_inference_graph.pb', label_map_path= TD_PATH + '/tl_label_map.pbtxt')	
+        # Switch classifier if on site
+        if not self.config["is_site"]:
+            self.classifier = TLClassifier(TD_PATH + '/sim_frozen_inference_graph.pb',
+                                           label_map_path=TD_PATH + '/tl_label_map.pbtxt')
+        else:
+            self.classifier = TLClassifier(TD_PATH + '/site_frozen_inference_graph.pb',
+                                           label_map_path=TD_PATH + '/tl_label_map.pbtxt')
 
         self.listener = tf.TransformListener()
 
@@ -125,7 +125,6 @@ class TLDetector(object):
 
         self.last_img_processed = timer()
         light_wp, state = self.process_traffic_lights()
-        print(timer() - self.last_img_processed)
 
         '''
         Collect Training Data
@@ -145,6 +144,7 @@ class TLDetector(object):
         of times till we start using it. Otherwise the previous stable state is
         used.
         '''
+
         # Ensure that the light state hasn't changed before taking any option
         if self.state != state:
             self.state_count = 0
@@ -233,7 +233,8 @@ class TLDetector(object):
             state = self.get_light_state(closest_light)
 
             if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
-                rospy.logwarn("Traffic Light: line_wp_idx={}, state={}".format(line_wp_idx, self.to_string(state)))
+                rospy.logwarn("Detected {color} traffic light at {idx}".format(
+                    idx=line_wp_idx, color=self.to_string(state)))
 
             return line_wp_idx, state
         else:

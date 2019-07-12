@@ -15,7 +15,6 @@ import tf
 from light_classification.tl_classifier import TLClassifier
 
 STATE_COUNT_THRESHOLD = 2
-TEST_MODE_ENABLED = False
 LOGGING_THROTTLE_FACTOR = 1
 CAMERA_IMG_PROCESS_RATE = .8  # ms
 WAYPOINT_DIFFERENCE = 300
@@ -28,8 +27,6 @@ BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, o
 MODEL_PATH = os.path.join(BASE_PATH, 'data')
 OUTPUT_PATH = os.path.join(MODEL_PATH, OUTPUT_DIRNAME)
 
-TL_DEBUG = False
-
 
 class TLDetector(object):
     def __init__(self):
@@ -41,34 +38,25 @@ class TLDetector(object):
         self.waypoint_tree = None
         self.camera_image = None
         self.lights = []
-        self.has_image = False
+        self.bridge = CvBridge()
 
         self.td_id = 1
         self.img_count = 0
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
-
-        '''
-        /vehicle/traffic_lights provides you with the location of the traffic light in 3D map space and
-        helps you acquire an accurate ground truth data source for the traffic light
-        classifier by sending the current color state of all traffic lights in the
-        simulator. When testing on the vehicle, the color state will not be available. You'll need to
-        rely on the position of the light and the camera image to predict it.
-        '''
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-
         sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
+        self.is_site = self.config["is_site"]
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
-        self.bridge = CvBridge()
 
         # Switch classifier if on site
-        if not self.config["is_site"]:
+        if not self.is_site:
             self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'sim_frozen_inference_graph.pb'),
                                            label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
         else:
@@ -126,7 +114,6 @@ class TLDetector(object):
         if time_elapsed < CAMERA_IMG_PROCESS_RATE:
             return
 
-        self.has_image = True
         self.camera_image = msg
 
         self.last_img_processed = timer()
@@ -182,26 +169,15 @@ class TLDetector(object):
         :return: ID of traffic light color (specified in styx_msgs/TrafficLight)
         """
 
-        # For test mode, just return the light state
-        if TEST_MODE_ENABLED or COLLECT_TD:
-            classification = light.state
+        # Return light state as ground truth
+        if COLLECT_TD:
+            return light.state
         else:
+            # convert camera image to cv image
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
             # Get classification
-            classification = self.classifier.get_classification(cv_image)
-
-        return classification
-
-    def to_string(self, state):
-        out = "unknown"
-        if state == TrafficLight.GREEN:
-            out = "green"
-        elif state == TrafficLight.YELLOW:
-            out = "yellow"
-        elif state == TrafficLight.RED:
-            out = "red"
-        return out
+            return self.classifier.get_classification(cv_image)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -221,7 +197,7 @@ class TLDetector(object):
             # car_position = self.get_closest_waypoint(self.pose.pose)
             car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
-            # TODO find the closest visible traffic light (if one exists)
+            # find the closest visible traffic light (if one exists)
             diff = len(self.waypoints.waypoints)
             for i, light in enumerate(self.lights):
                 # Get stop line waypoint index
@@ -240,11 +216,10 @@ class TLDetector(object):
 
             if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
                 rospy.logwarn("Detected {color} traffic light at {idx}".format(
-                    idx=line_wp_idx, color=self.to_string(state)))
+                    idx=line_wp_idx, color=StateToString[state]))
 
             return line_wp_idx, state
         else:
-            # rospy.loginfo ("ptf: unknown state of traffic light")
             return -1, TrafficLight.UNKNOWN
 
 

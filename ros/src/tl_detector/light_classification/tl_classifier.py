@@ -5,6 +5,7 @@ from utils import label_map_util
 from utils import ops as utils_ops
 import cv2
 from collections import Counter
+from utils.tl_utils import StringToState
 
 
 class TLClassifier(object):
@@ -28,14 +29,6 @@ class TLClassifier(object):
                 self.sess = tf.Session(graph=self.detection_graph)
 
         self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=False)
-
-        self.dict = \
-            {
-                'red': TrafficLight.RED,
-                'yellow': TrafficLight.YELLOW,
-                'green': TrafficLight.GREEN,
-                'unknown': TrafficLight.UNKNOWN
-            }
 
     def get_classification(self, img):
 
@@ -70,7 +63,7 @@ class TLClassifier(object):
         #         # if classes[i] in self.category_index.keys():
         #         class_name = self.category_index[classes[i]]['name']
 
-        return self.dict[self.category_index[dict[max_vote][0]]['name']]
+        return StringToState[self.category_index[dict[max_vote][0]]['name']]
 
     @staticmethod
     def run_inference_for_single_image(image, graph):

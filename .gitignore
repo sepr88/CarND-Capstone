@@ -11,3 +11,4 @@ split/
 ros/devel/
 ros/build/
 .idea/
+.idea/*.xml

@@ -8,15 +8,13 @@ from tensorflow import app
 from light_classification.tl_classifier import TLClassifier
 from utils.tl_utils import convert_to_pascal_voc, print_progress
 
+MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'data'))
+
 flags = app.flags
 flags.DEFINE_string('path', '', 'Root directory to dataset.')
-flags.DEFINE_string('label_map_path',
-                    '/home/basti/Udacity/CarND-Capstone/ros/src/tl_detector/light_classification/'
-                    'training/mscoco_label_map.pbtxt',
+flags.DEFINE_string('label_map_path', os.path.join(MODEL_PATH, 'mscoco_label_map.pbtxt'),
                     'Path to file containing the labels [.pbtxt]')
-flags.DEFINE_string('model_path',
-                    '/home/basti/Udacity/CarND-Capstone/ros/src/'
-                    'tl_detector/rfcn_resnet101_coco_2018_01_28/frozen_inference_graph.pb',
+flags.DEFINE_string('model_path', os.path.join(MODEL_PATH, 'mscoco_frozen_inference_graph.pb'),
                     'Path to the frozen inference graph [.pb]')
 flags.DEFINE_boolean('overwrite', True, 'Whether to overwrite existing annotations')
 

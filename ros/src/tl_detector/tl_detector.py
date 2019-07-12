@@ -20,9 +20,14 @@ LOGGING_THROTTLE_FACTOR = 1
 CAMERA_IMG_PROCESS_RATE = .8  # ms
 WAYPOINT_DIFFERENCE = 300
 
-COLLECT_TD = False
+COLLECT_TD = True
 TD_RATE = 5  # only save every i-th image
-TD_PATH = '../../../data'
+OUTPUT_DIRNAME = 'tl-set-1'
+
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir))
+MODEL_PATH = os.path.join(BASE_PATH, 'data')
+OUTPUT_PATH = os.path.join(MODEL_PATH, OUTPUT_DIRNAME)
+
 TL_DEBUG = False
 
 
@@ -64,11 +69,11 @@ class TLDetector(object):
 
         # Switch classifier if on site
         if not self.config["is_site"]:
-            self.classifier = TLClassifier(TD_PATH + '/sim_frozen_inference_graph.pb',
-                                           label_map_path=TD_PATH + '/tl_label_map.pbtxt')
+            self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'sim_frozen_inference_graph.pb'),
+                                           label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
         else:
-            self.classifier = TLClassifier(TD_PATH + '/site_frozen_inference_graph.pb',
-                                           label_map_path=TD_PATH + '/tl_label_map.pbtxt')
+            self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, '/site_frozen_inference_graph.pb'),
+                                           label_map_path=os.path.join(MODEL_PATH, '/tl_label_map.pbtxt'))
 
         self.listener = tf.TransformListener()
 
@@ -81,12 +86,13 @@ class TLDetector(object):
         self.process_count = 0
         self.last_img_processed = 0
 
-        self.td_base_path = TD_PATH
-        self.td_img_path = os.path.join(self.td_base_path, 'IMG')
+        self.td_img_path = os.path.join(OUTPUT_PATH, 'IMG')
 
         if COLLECT_TD:
-            if not os.path.exists(self.td_base_path):
-                os.mkdir(self.td_base_path)
+            if not os.path.exists(OUTPUT_PATH):
+                os.mkdir(OUTPUT_PATH)
+            else:
+                raise Exception('Directory {} already exists. Please choose a different name.'.format(OUTPUT_PATH))
 
             if not os.path.exists(self.td_img_path):
                 os.mkdir(self.td_img_path)
@@ -134,7 +140,7 @@ class TLDetector(object):
         label = tl_utils.tl_state_to_label(state)
         if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0:
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-            tl_utils.save_td(uid=self.td_id, cv_image=cv_image, label=label, csv_path=self.td_base_path,
+            tl_utils.save_td(uid=self.td_id, cv_image=cv_image, label=label, csv_path=OUTPUT_PATH,
                              img_path=self.td_img_path)
             self.td_id += 1
 

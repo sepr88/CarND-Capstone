@@ -10,6 +10,7 @@ from cv_bridge import CvBridge
 import yaml
 from scipy.spatial import KDTree
 from utils import tl_utils
+from utils.tl_utils import StateToString
 import os
 import tf
 from light_classification.tl_classifier import TLClassifier
@@ -19,7 +20,7 @@ LOGGING_THROTTLE_FACTOR = 1
 CAMERA_IMG_PROCESS_RATE = .8  # ms
 WAYPOINT_DIFFERENCE = 300
 
-COLLECT_TD = True
+COLLECT_TD = False
 TD_RATE = 5  # only save every i-th image
 OUTPUT_DIRNAME = 'tl-set-1'
 
@@ -43,10 +44,10 @@ class TLDetector(object):
         self.td_id = 1
         self.img_count = 0
 
-        sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
-        sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
-        sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
+        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
+        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
+        rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -54,14 +55,13 @@ class TLDetector(object):
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
-
-        # Switch classifier if on site
+        # Choose classifier
         if not self.is_site:
             self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'sim_frozen_inference_graph.pb'),
                                            label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
         else:
-            self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, '/site_frozen_inference_graph.pb'),
-                                           label_map_path=os.path.join(MODEL_PATH, '/tl_label_map.pbtxt'))
+            self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'site_frozen_inference_graph.pb'),
+                                           label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
 
         self.listener = tf.TransformListener()
 
@@ -119,6 +119,7 @@ class TLDetector(object):
         self.last_img_processed = timer()
         light_wp, state = self.process_traffic_lights()
 
+
         '''
         Collect Training Data
         '''
@@ -170,7 +171,7 @@ class TLDetector(object):
         """
 
         # Return light state as ground truth
-        if COLLECT_TD:
+        if COLLECT_TD and not self.is_site:
             return light.state
         else:
             # convert camera image to cv image
@@ -193,12 +194,13 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
+
         if self.pose:
-            # car_position = self.get_closest_waypoint(self.pose.pose)
             car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
             # find the closest visible traffic light (if one exists)
             diff = len(self.waypoints.waypoints)
+
             for i, light in enumerate(self.lights):
                 # Get stop line waypoint index
                 line = stop_line_positions[i]
@@ -209,6 +211,17 @@ class TLDetector(object):
                     diff = d
                     closest_light = light
                     line_wp_idx = temp_wp_idx
+
+        '''
+        elif self.is_site:
+            self.process_count += 1
+            state = self.get_light_state(None)
+
+            if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
+                if state is not TrafficLight.UNKNOWN:
+                    rospy.logwarn("Detected {color} traffic light".format(
+                        color=StateToString[state]))
+        '''
 
         if closest_light and ((line_wp_idx - car_wp_idx) <= WAYPOINT_DIFFERENCE):
             self.process_count += 1

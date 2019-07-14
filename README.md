@@ -8,7 +8,7 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 # Video
 
-<a href="https://youtu.be/eOcRwx-1ZvY" target="_blank"><img src="./data/video_thumbnail.png"></a>
+<a href="https://youtu.be/8Vk8Ecx62eU" target="_blank"><img src="./data/video_thumbnail.png"></a>
 
 # Worklow: Create your training data for the Simulator
 

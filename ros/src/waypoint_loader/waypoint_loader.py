@@ -3,11 +3,8 @@
 import os
 import csv
 import math
-
 from geometry_msgs.msg import Quaternion
-
 from styx_msgs.msg import Lane, Waypoint
-
 import tf
 import rospy
 
@@ -40,6 +37,9 @@ class WaypointLoader(object):
     def kmph2mps(self, velocity_kmph):
         return (velocity_kmph * 1000.) / (60. * 60.)
 
+    def mps2mph(self, velocity_mps):
+        return velocity_mps * 2.2369
+
     def load_waypoints(self, fname):
         waypoints = []
         with open(fname) as wfile:
@@ -54,6 +54,8 @@ class WaypointLoader(object):
                 p.twist.twist.linear.x = float(self.velocity)
 
                 waypoints.append(p)
+
+        rospy.logwarn('Target Velocity set to {:1f} mph'.format(self.mps2mph(self.velocity)))
         return self.decelerate(waypoints)
 
     def distance(self, p1, p2):

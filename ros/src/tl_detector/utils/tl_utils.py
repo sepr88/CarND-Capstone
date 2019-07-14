@@ -9,6 +9,21 @@ import numpy as np
 import os
 from shutil import copyfile
 
+StringToState = \
+    {
+        'red': TrafficLight.RED,
+        'yellow': TrafficLight.YELLOW,
+        'green': TrafficLight.GREEN,
+        'unknown': TrafficLight.UNKNOWN
+    }
+
+StateToString = \
+    {
+        TrafficLight.RED: 'red',
+        TrafficLight.YELLOW: 'yellow',
+        TrafficLight.GREEN: 'green',
+        TrafficLight.UNKNOWN: 'unknown'
+    }
 
 def save_td(uid, cv_image, label, csv_path, img_path):
     """

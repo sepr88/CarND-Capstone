@@ -10,20 +10,23 @@ from cv_bridge import CvBridge
 import yaml
 from scipy.spatial import KDTree
 from utils import tl_utils
+from utils.tl_utils import StateToString
 import os
 import tf
 from light_classification.tl_classifier import TLClassifier
 
 STATE_COUNT_THRESHOLD = 2
-TEST_MODE_ENABLED = False
 LOGGING_THROTTLE_FACTOR = 1
 CAMERA_IMG_PROCESS_RATE = .8  # ms
 WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = False
 TD_RATE = 5  # only save every i-th image
-TD_PATH = '../../../data'
-TL_DEBUG = False
+OUTPUT_DIRNAME = 'tl-set-1'
+
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir))
+MODEL_PATH = os.path.join(BASE_PATH, 'data')
+OUTPUT_PATH = os.path.join(MODEL_PATH, OUTPUT_DIRNAME)
 
 
 class TLDetector(object):
@@ -36,39 +39,29 @@ class TLDetector(object):
         self.waypoint_tree = None
         self.camera_image = None
         self.lights = []
-        self.has_image = False
+        self.bridge = CvBridge()
 
         self.td_id = 1
         self.img_count = 0
 
-        sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
-        sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
-
-        '''
-        /vehicle/traffic_lights provides you with the location of the traffic light in 3D map space and
-        helps you acquire an accurate ground truth data source for the traffic light
-        classifier by sending the current color state of all traffic lights in the
-        simulator. When testing on the vehicle, the color state will not be available. You'll need to
-        rely on the position of the light and the camera image to predict it.
-        '''
-        sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
+        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
+        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
+        rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
+        self.is_site = self.config["is_site"]
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
-        self.bridge = CvBridge()
-
-        # Switch classifier if on site
-        if not self.config["is_site"]:
-            self.classifier = TLClassifier(TD_PATH + '/sim_frozen_inference_graph.pb',
-                                           label_map_path=TD_PATH + '/tl_label_map.pbtxt')
+        # Choose classifier
+        if not self.is_site:
+            self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'sim_frozen_inference_graph.pb'),
+                                           label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
         else:
-            self.classifier = TLClassifier(TD_PATH + '/site_frozen_inference_graph.pb',
-                                           label_map_path=TD_PATH + '/tl_label_map.pbtxt')
+            self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'site_frozen_inference_graph.pb'),
+                                           label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
 
         self.listener = tf.TransformListener()
 
@@ -81,12 +74,13 @@ class TLDetector(object):
         self.process_count = 0
         self.last_img_processed = 0
 
-        self.td_base_path = TD_PATH
-        self.td_img_path = os.path.join(self.td_base_path, 'IMG')
+        self.td_img_path = os.path.join(OUTPUT_PATH, 'IMG')
 
         if COLLECT_TD:
-            if not os.path.exists(self.td_base_path):
-                os.mkdir(self.td_base_path)
+            if not os.path.exists(OUTPUT_PATH):
+                os.mkdir(OUTPUT_PATH)
+            else:
+                raise Exception('Directory {} already exists. Please choose a different name.'.format(OUTPUT_PATH))
 
             if not os.path.exists(self.td_img_path):
                 os.mkdir(self.td_img_path)
@@ -120,11 +114,11 @@ class TLDetector(object):
         if time_elapsed < CAMERA_IMG_PROCESS_RATE:
             return
 
-        self.has_image = True
         self.camera_image = msg
 
         self.last_img_processed = timer()
         light_wp, state = self.process_traffic_lights()
+
 
         '''
         Collect Training Data
@@ -134,7 +128,7 @@ class TLDetector(object):
         label = tl_utils.tl_state_to_label(state)
         if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0:
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-            tl_utils.save_td(uid=self.td_id, cv_image=cv_image, label=label, csv_path=self.td_base_path,
+            tl_utils.save_td(uid=self.td_id, cv_image=cv_image, label=label, csv_path=OUTPUT_PATH,
                              img_path=self.td_img_path)
             self.td_id += 1
 
@@ -176,26 +170,15 @@ class TLDetector(object):
         :return: ID of traffic light color (specified in styx_msgs/TrafficLight)
         """
 
-        # For test mode, just return the light state
-        if TEST_MODE_ENABLED or COLLECT_TD:
-            classification = light.state
+        # Return light state as ground truth
+        if COLLECT_TD and not self.is_site:
+            return light.state
         else:
+            # convert camera image to cv image
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
             # Get classification
-            classification = self.classifier.get_classification(cv_image)
-
-        return classification
-
-    def to_string(self, state):
-        out = "unknown"
-        if state == TrafficLight.GREEN:
-            out = "green"
-        elif state == TrafficLight.YELLOW:
-            out = "yellow"
-        elif state == TrafficLight.RED:
-            out = "red"
-        return out
+            return self.classifier.get_classification(cv_image)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -211,12 +194,13 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
+
         if self.pose:
-            # car_position = self.get_closest_waypoint(self.pose.pose)
             car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
-            # TODO find the closest visible traffic light (if one exists)
+            # find the closest visible traffic light (if one exists)
             diff = len(self.waypoints.waypoints)
+
             for i, light in enumerate(self.lights):
                 # Get stop line waypoint index
                 line = stop_line_positions[i]
@@ -228,17 +212,27 @@ class TLDetector(object):
                     closest_light = light
                     line_wp_idx = temp_wp_idx
 
+        '''
+        elif self.is_site:
+            self.process_count += 1
+            state = self.get_light_state(None)
+
+            if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
+                if state is not TrafficLight.UNKNOWN:
+                    rospy.logwarn("Detected {color} traffic light".format(
+                        color=StateToString[state]))
+        '''
+
         if closest_light and ((line_wp_idx - car_wp_idx) <= WAYPOINT_DIFFERENCE):
             self.process_count += 1
             state = self.get_light_state(closest_light)
 
             if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
                 rospy.logwarn("Detected {color} traffic light at {idx}".format(
-                    idx=line_wp_idx, color=self.to_string(state)))
+                    idx=line_wp_idx, color=StateToString[state]))
 
             return line_wp_idx, state
         else:
-            # rospy.loginfo ("ptf: unknown state of traffic light")
             return -1, TrafficLight.UNKNOWN
 
 

@@ -5,6 +5,7 @@ from utils import label_map_util
 from utils import ops as utils_ops
 import cv2
 from collections import Counter
+from utils.tl_utils import StringToState
 
 
 class TLClassifier(object):
@@ -29,14 +30,6 @@ class TLClassifier(object):
 
         self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=False)
 
-        self.dict = \
-            {
-                'red': TrafficLight.RED,
-                'yellow': TrafficLight.YELLOW,
-                'green': TrafficLight.GREEN,
-                'unknown': TrafficLight.UNKNOWN
-            }
-
     def get_classification(self, img):
 
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -48,29 +41,35 @@ class TLClassifier(object):
                  self.d_classes, self.num_d],
                 feed_dict={self.image_tensor: img_expanded})
 
-        # boxes = np.squeeze(boxes)
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
 
         detected_lights = [i[0] for i in zip(classes, scores) if i[1] > self.min_score]
-        votes = Counter(detected_lights)
-        dict = {}
 
-        for value in votes.values():
-            dict[value] = []
+        if detected_lights:
+            votes = Counter(detected_lights)
+            dict = {}
 
-            for (key, value) in votes.iteritems():
-                dict[value].append(key)
+            for value in votes.values():
+                dict[value] = []
 
-        max_vote = sorted(dict.keys(), reverse=True)[0]
+                for (key, value) in votes.iteritems():
+                    try:
+                        dict[value].append(key)
+                    except KeyError:
+                        return TrafficLight.UNKNOWN
+
+            max_vote = sorted(dict.keys(), reverse=True)[0]
+
+            return StringToState[self.category_index[dict[max_vote][0]]['name']]
+        else:
+            return TrafficLight.UNKNOWN
 
         # class_name = 'unknown'
         # for i in range(boxes.shape[0]):
         #     if scores[i] > self.min_score:
         #         # if classes[i] in self.category_index.keys():
         #         class_name = self.category_index[classes[i]]['name']
-
-        return self.dict[self.category_index[dict[max_vote][0]]['name']]
 
     @staticmethod
     def run_inference_for_single_image(image, graph):
@@ -102,8 +101,10 @@ class TLClassifier(object):
                                                                                           image.shape[2])
 
                     detection_masks_reframed = tf.cast(tf.greater(detection_masks_reframed, 0.5), tf.uint8)
+
                     # Follow the convention by adding back the batch dimension
                     tensor_dict['detection_masks'] = tf.expand_dims(detection_masks_reframed, 0)
+
                 image_tensor = tf.get_default_graph().get_tensor_by_name('image_tensor:0')
 
                 # Run inference

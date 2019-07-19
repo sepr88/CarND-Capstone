@@ -223,17 +223,19 @@ class TLDetector(object):
                         color=StateToString[state]))
         '''
 
-        if closest_light and ((line_wp_idx - car_wp_idx) <= WAYPOINT_DIFFERENCE):
-            self.process_count += 1
-            state = self.get_light_state(closest_light)
+        if closest_light:
+            distance = line_wp_idx - car_wp_idx
+            if distance <= WAYPOINT_DIFFERENCE:
+                self.process_count += 1
+                state = self.get_light_state(closest_light)
 
-            if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
-                rospy.logwarn("Detected {color} traffic light at {idx}".format(
-                    idx=line_wp_idx, color=StateToString[state]))
+                if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
+                    rospy.logwarn("TRAFFIC: Detected {color} traffic light at {idx}, distance={distance} ".format(
+                        idx=line_wp_idx, color=StateToString[state], distance=distance))
 
-            return line_wp_idx, state
-        else:
-            return -1, TrafficLight.UNKNOWN
+                return line_wp_idx, state
+
+        return -1, TrafficLight.UNKNOWN
 
 
 if __name__ == '__main__':

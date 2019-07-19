@@ -5,6 +5,7 @@ import rospy
 
 GAS_DENSITY = 2.858
 ONE_MPH = 0.44704
+LOGGING_THROTTLE_FACTOR = 40
 
 
 class Controller(object):
@@ -19,9 +20,9 @@ class Controller(object):
 
         kp = 0.3
         ki = 0.1
-        kd = 0.
-        mn = 0.  # Minimum throttle value
-        mx = .4  # Maximum throttle value 0.2
+        kd = 0.0
+        mn = 0.0  # Minimum throttle value
+        mx = 0.2  # Maximum throttle value 0.2
 
         self.throttle_controller = PID(kp=kp, ki=ki, kd=kd, mn=mn, mx=mx)
 
@@ -37,6 +38,7 @@ class Controller(object):
         self.wheel_radius = wheel_radius
         self.last_vel = 0.
         self.last_time = rospy.get_time()
+        self.process_count = 0
 
     def control(self, current_vel, dbw_enabled, linear_vel, angular_vel):
 
@@ -45,6 +47,7 @@ class Controller(object):
             return 0., 0., 0.
 
         current_vel = self.vel_lpf.filt(current_vel)
+        self.process_count += 1
 
         # rospy.logwarn("Angular vel: {0}".format(angular_vel))
         # rospy.logwarn("Target velocity: {0}".format(linear_vel))
@@ -52,7 +55,7 @@ class Controller(object):
         # rospy.logwarn("Current velocity: {0}".format(current_vel))
         # rospy.logwarn("Filtered velocity: {0}".format(self.vel_lpf.get()))
 
-        steering = self.yaw_controller.get_steering(linear_vel, angular_vel, current_vel)  # TODO: add dampening terms
+        steering = self.yaw_controller.get_steering(linear_vel, angular_vel, current_vel)
 
         vel_error = linear_vel - current_vel
         self.last_vel = current_vel
@@ -72,6 +75,12 @@ class Controller(object):
             throttle = 0
             decel = max(vel_error, self.decel_limit)
             brake = abs(decel)*self.vehicle_mass*self.wheel_radius
+
+        if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
+            rospy.logwarn('CONTROL: velocity={:.1f} throttle={:.2f}, brake={:.2f}, steering={:.4f}'.format(current_vel,
+                                                                                                           throttle,
+                                                                                                           brake,
+                                                                                                           steering))
 
         return throttle, brake, steering
 

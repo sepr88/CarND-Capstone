@@ -17,7 +17,7 @@ from light_classification.tl_classifier import TLClassifier
 
 STATE_COUNT_THRESHOLD = 2
 LOGGING_THROTTLE_FACTOR = 1
-CAMERA_IMG_PROCESS_RATE = .8  # ms
+CAMERA_IMG_PROCESS_RATE = 1.5  # ms
 WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = False

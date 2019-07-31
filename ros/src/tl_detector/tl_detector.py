@@ -17,7 +17,7 @@ from light_classification.tl_classifier import TLClassifier
 
 STATE_COUNT_THRESHOLD = 2
 LOGGING_THROTTLE_FACTOR = 1
-CAMERA_IMG_PROCESS_RATE = 1.5  # ms
+CAMERA_IMG_PROCESS_RATE = 1.3  # s
 WAYPOINT_DIFFERENCE = 300
 
 COLLECT_TD = False
@@ -65,14 +65,13 @@ class TLDetector(object):
 
         self.listener = tf.TransformListener()
 
-        self.state = TrafficLight.UNKNOWN
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
 
-        self.class_count = 0
         self.process_count = 0
         self.last_img_processed = 0
+        self.process_rate = CAMERA_IMG_PROCESS_RATE
 
         self.td_img_path = os.path.join(OUTPUT_PATH, 'IMG')
 
@@ -84,6 +83,7 @@ class TLDetector(object):
 
             if not os.path.exists(self.td_img_path):
                 os.mkdir(self.td_img_path)
+
 
         rospy.spin()
 
@@ -108,22 +108,21 @@ class TLDetector(object):
 
         """
 
-        time_elapsed = timer() - self.last_img_processed 
+        time_elapsed = timer() - self.last_img_processed
 
         # Do not process the camera image unless 20 milliseconds have passed from last processing
-        if time_elapsed < CAMERA_IMG_PROCESS_RATE:
+        if time_elapsed < self.process_rate:
             return
 
         self.camera_image = msg
 
         self.last_img_processed = timer()
         light_wp, state = self.process_traffic_lights()
-
+        rospy.logwarn('INFERENCE TIME: {:.3f} s'.format(timer()-self.last_img_processed))
 
         '''
         Collect Training Data
         '''
-        # Collect training data
         self.img_count += 1
         label = tl_utils.tl_state_to_label(state)
         if COLLECT_TD and light_wp != -1 and self.img_count % TD_RATE == 0:
@@ -140,17 +139,20 @@ class TLDetector(object):
         '''
 
         # Ensure that the light state hasn't changed before taking any option
-        if self.state != state:
+        if self.last_state != state:
             self.state_count = 0
-            self.state = state
-        elif self.state_count >= STATE_COUNT_THRESHOLD:
-            self.last_state = self.state
+            self.last_state = state
+
+        self.state_count += 1
+
+        if self.state_count >= STATE_COUNT_THRESHOLD:
+            self.last_state = state
             light_wp = light_wp if state == TrafficLight.RED else -1
             self.last_wp = light_wp
-            self.upcoming_red_light_pub.publish(Int32(light_wp))
-        else:
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        self.state_count += 1
+
+        self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+
+        #rospy.logwarn('state={}, last_state={}, state_count={}, wp={}'.format(state, self.last_state, self.state_count, self.last_wp))
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position

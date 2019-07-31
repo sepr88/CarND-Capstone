@@ -28,7 +28,6 @@ BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, o
 MODEL_PATH = os.path.join(BASE_PATH, 'data')
 OUTPUT_PATH = os.path.join(MODEL_PATH, OUTPUT_DIRNAME)
 
-
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
@@ -43,6 +42,14 @@ class TLDetector(object):
 
         self.td_id = 1
         self.img_count = 0
+
+        self.last_state = TrafficLight.UNKNOWN
+        self.last_wp = -1
+        self.state_count = 0
+
+        self.process_count = 0
+        self.last_img_processed = -1
+        self.process_rate = CAMERA_IMG_PROCESS_RATE
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -63,15 +70,9 @@ class TLDetector(object):
             self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'site_frozen_inference_graph.pb'),
                                            label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
 
-        self.listener = tf.TransformListener()
+	
 
-        self.last_state = TrafficLight.UNKNOWN
-        self.last_wp = -1
-        self.state_count = 0
 
-        self.process_count = 0
-        self.last_img_processed = 0
-        self.process_rate = CAMERA_IMG_PROCESS_RATE
 
         self.td_img_path = os.path.join(OUTPUT_PATH, 'IMG')
 
@@ -84,13 +85,16 @@ class TLDetector(object):
             if not os.path.exists(self.td_img_path):
                 os.mkdir(self.td_img_path)
 
-
+	rospy.init_node('tl_detector')
+	self.last_img_processed = 0	
+        self.listener = tf.TransformListener()
         rospy.spin()
 
     def pose_cb(self, msg):
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
+	rospy.logwarn("Waypoints received")
         self.waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
@@ -107,6 +111,11 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
+	if self.waypoint_tree == None:
+		return
+
+	if self.last_img_processed == -1:
+		return
 
         time_elapsed = timer() - self.last_img_processed
 

@@ -24,7 +24,7 @@ as well as to verify your TL classifier.
 '''
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
-MAX_DECEL = .5
+MAX_DECEL = .3
 
 
 class WaypointUpdater(object):
@@ -100,9 +100,10 @@ class WaypointUpdater(object):
             p = Waypoint()
             p.pose = wp.pose
 
-            stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0) # 2 waypoints back from line so front of car stops at the line
+            # 2 waypoints back from line so front of car stops at the line
+            stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)
             dist = self.distance(waypoints, i, stop_idx)
-            vel = math.sqrt(2 * MAX_DECEL * dist)
+            vel = math.sqrt(2.0 * MAX_DECEL * dist)
             if vel < 1.:
                 vel = 0.
 

@@ -8,23 +8,21 @@ from utils import label_map_util
 from utils import tl_utils
 import os
 
-
-
 flags = tf.app.flags
 flags.DEFINE_string('model',
-                    '/home/basti/tools/models/research/object_detection/training/fine_tuned_model/frozen_inference_graph.pb',
+                    '/home/basti/Udacity/CarND-Capstone/data/site_frozen_inference_graph.pb',
                     'Path pointing to the frozen inference graph (.pb)')
 
 flags.DEFINE_string('label_map',
-                    '/home/basti/tools/models/research/object_detection/training/tl_label_map.pbtxt',
+                    '/home/basti/Udacity/CarND-Capstone/data/tl_label_map.pbtxt',
                     'Path pointing to the label map (.pbtxt)')
 
 flags.DEFINE_string('img_path',
-                    '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-1/IMG',
+                    '/home/basti/Desktop/rosbags/rosbag-3/exported',
                     'Directory containing images')
 
 flags.DEFINE_string('output_path',
-                    '/home/basti/Udacity/CarND-Capstone/sim_datasets/raw/tl-set-1/classification_result',
+                    '/home/basti/Desktop/rosbags/rosbag-3/result',
                     'Directory to store the visualized classification result.')
 
 FLAGS = flags.FLAGS

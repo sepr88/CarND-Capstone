@@ -15,10 +15,11 @@ import os
 import tf
 from light_classification.tl_classifier import TLClassifier
 
-STATE_COUNT_THRESHOLD = 2
+STATE_COUNT_THRESHOLD_SITE = 2
+STATE_COUNT_THRESHOLD = 1
 LOGGING_THROTTLE_FACTOR = 1
-CAMERA_IMG_PROCESS_RATE = 1.3  # s
-WAYPOINT_DIFFERENCE = 300
+CAMERA_IMG_PROCESS_RATE = 0.2  # s
+WAYPOINT_DIFFERENCE = 100
 
 COLLECT_TD = False
 TD_RATE = 5  # only save every i-th image
@@ -30,7 +31,13 @@ OUTPUT_PATH = os.path.join(MODEL_PATH, OUTPUT_DIRNAME)
 
 class TLDetector(object):
     def __init__(self):
+
         rospy.init_node('tl_detector')
+
+        self.initialized = False
+        self.pose_received = False
+        self.waypoints_received = False
+        self.image_received = False
 
         self.pose = None
         self.waypoints = None
@@ -61,6 +68,12 @@ class TLDetector(object):
         self.is_site = self.config["is_site"]
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
+        self.tl_detector_state_pub = rospy.Publisher('/tl_detector_state', Int32, queue_size=1)
+
+        self.state_count_th = STATE_COUNT_THRESHOLD
+
+        if self.is_site:
+            self.state_count_th = STATE_COUNT_THRESHOLD_SITE
 
         # Choose classifier
         if not self.is_site:
@@ -69,10 +82,6 @@ class TLDetector(object):
         else:
             self.classifier = TLClassifier(model_path=os.path.join(MODEL_PATH, 'site_frozen_inference_graph.pb'),
                                            label_map_path=os.path.join(MODEL_PATH, 'tl_label_map.pbtxt'))
-
-	
-
-
 
         self.td_img_path = os.path.join(OUTPUT_PATH, 'IMG')
 
@@ -85,17 +94,25 @@ class TLDetector(object):
             if not os.path.exists(self.td_img_path):
                 os.mkdir(self.td_img_path)
 
-	rospy.init_node('tl_detector')
-	self.last_img_processed = 0	
+        rospy.init_node('tl_detector')
+        self.last_img_processed = 0
         self.listener = tf.TransformListener()
+        self.initialized = True
         rospy.spin()
+
+    def is_initialized(self):
+        return self.pose_received and self.waypoints_received and self.image_received and self.initialized
 
     def pose_cb(self, msg):
         self.pose = msg
+        self.pose_received = True
 
     def waypoints_cb(self, waypoints):
-	rospy.logwarn("Waypoints received")
+
+        rospy.logwarn("Waypoints received")
         self.waypoints = waypoints
+        self.waypoints_received = True
+
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
@@ -111,15 +128,18 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
-	if self.waypoint_tree == None:
-		return
+        self.image_received = True
 
-	if self.last_img_processed == -1:
-		return
+        is_initialized = self.is_initialized()
+
+        self.tl_detector_state_pub.publish(Int32(is_initialized))
+
+        if not is_initialized:
+            return
 
         time_elapsed = timer() - self.last_img_processed
 
-        # Do not process the camera image unless 20 milliseconds have passed from last processing
+        # Do not process the camera image unless some time has passed from last processing
         if time_elapsed < self.process_rate:
             return
 
@@ -154,14 +174,12 @@ class TLDetector(object):
 
         self.state_count += 1
 
-        if self.state_count >= STATE_COUNT_THRESHOLD:
+        if self.state_count >= self.state_count_th:
             self.last_state = state
             light_wp = light_wp if state == TrafficLight.RED else -1
             self.last_wp = light_wp
 
         self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-
-        #rospy.logwarn('state={}, last_state={}, state_count={}, wp={}'.format(state, self.last_state, self.state_count, self.last_wp))
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
@@ -189,7 +207,7 @@ class TLDetector(object):
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
             # Get classification
-            return self.classifier.get_classification(cv_image)
+            return self.classifier.get_classification(cv_image, min_score=0.55)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its

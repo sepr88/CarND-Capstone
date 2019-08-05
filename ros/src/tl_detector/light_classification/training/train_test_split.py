@@ -10,21 +10,23 @@ flags = tf.app.flags
 flags.DEFINE_string('input_path', '', 'Root directory to dataset.')
 flags.DEFINE_string('output_path', '', 'Root directory to output datasets.')
 flags.DEFINE_float('validation_size', 0.2, 'Root directory to output datasets.')
+flags.DEFINE_string('img_dir', 'IMG', '')
+flags.DEFINE_string('label_dir', 'voc-labels', '')
 FLAGS = flags.FLAGS
 
 
-def split_dataset(in_path, out_path, validation_size):
+def split_dataset(in_path, out_path, img_dir, label_dir, validation_size):
 
     if not os.path.exists(in_path):
         print("input path does not exist: {}".format(in_path))
         return
 
-    in_img_path = os.path.join(in_path, 'IMG')
+    in_img_path = os.path.join(in_path, img_dir)
     if not os.path.exists(in_img_path):
         print("image path does not exist: {}".format(in_img_path))
         return
 
-    in_label_path = os.path.join(in_path, 'voc-labels')
+    in_label_path = os.path.join(in_path, label_dir)
     if not os.path.exists(in_label_path):
         print("label path does not exist: {}".format(in_label_path))
         return
@@ -94,7 +96,11 @@ def split_dataset(in_path, out_path, validation_size):
 
 
 def main(_):
-    split_dataset(FLAGS.input_path, FLAGS.output_path, FLAGS.validation_size)
+    split_dataset(in_path=FLAGS.input_path,
+                  out_path=FLAGS.output_path,
+                  img_dir=FLAGS.img_dir,
+                  label_dir=FLAGS.label_dir,
+                  validation_size=FLAGS.validation_size)
 
 
 if __name__ == '__main__':

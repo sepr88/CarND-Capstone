@@ -112,20 +112,21 @@ def convert_to_pascal_voc(out_path, img_path, img_name, boxes, label, img_shape)
     ET.SubElement(size, "depth").text = str(img_shape[2])
     ET.SubElement(annotation, "segmented").text = "0"
 
-    for box in boxes:
-        obj_elem = ET.SubElement(annotation, "object")
+    if boxes is not None:
+        for box in boxes:
+            obj_elem = ET.SubElement(annotation, "object")
 
-        ET.SubElement(obj_elem, "name").text = str(label)
-        ET.SubElement(obj_elem, "pose").text = "Unspecified"
-        ET.SubElement(obj_elem, "truncated").text = "0"
-        ET.SubElement(obj_elem, "difficult").text = "0"
+            ET.SubElement(obj_elem, "name").text = str(label)
+            ET.SubElement(obj_elem, "pose").text = "Unspecified"
+            ET.SubElement(obj_elem, "truncated").text = "0"
+            ET.SubElement(obj_elem, "difficult").text = "0"
 
-        bndbox = ET.SubElement(obj_elem, "bndbox")
+            bndbox = ET.SubElement(obj_elem, "bndbox")
 
-        ET.SubElement(bndbox, "ymin").text = str(np.uint32(box[0] * img_shape[0]))
-        ET.SubElement(bndbox, "xmin").text = str(np.uint32(box[1] * img_shape[1]))
-        ET.SubElement(bndbox, "ymax").text = str(np.uint32(box[2] * img_shape[0]))
-        ET.SubElement(bndbox, "xmax").text = str(np.uint32(box[3] * img_shape[1]))
+            ET.SubElement(bndbox, "ymin").text = str(np.uint32(box[0] * img_shape[0]))
+            ET.SubElement(bndbox, "xmin").text = str(np.uint32(box[1] * img_shape[1]))
+            ET.SubElement(bndbox, "ymax").text = str(np.uint32(box[2] * img_shape[0]))
+            ET.SubElement(bndbox, "xmax").text = str(np.uint32(box[3] * img_shape[1]))
 
     tree = ET.ElementTree(annotation)
 

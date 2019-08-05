@@ -9,9 +9,8 @@ from utils.tl_utils import StringToState
 
 
 class TLClassifier(object):
-    def __init__(self, model_path, label_map_path, min_score=0.75):
+    def __init__(self, model_path, label_map_path):
         self.detection_graph = tf.Graph()
-        self.min_score = min_score
 
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
@@ -30,7 +29,30 @@ class TLClassifier(object):
 
         self.category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=False)
 
-    def get_classification(self, img):
+    def get_classification2(self, img, min_score=0.75):
+        image_np_expanded = np.expand_dims(img, axis=0)
+
+        (boxes, scores, classes, num) = self.sess.run(
+            [self.d_boxes, self.d_scores, self.d_classes, self.num_d],
+            feed_dict={self.image_tensor: image_np_expanded})
+
+        boxes = np.squeeze(boxes)
+        scores = np.squeeze(scores)
+        classes = np.squeeze(classes).astype(np.int32)
+
+        if scores is not None and scores[0] >= min_score:
+            if classes[0] == 1:
+                return TrafficLight.RED
+
+            if classes[0] == 2:
+                return TrafficLight.YELLOW
+
+            if classes[0] == 3:
+                return TrafficLight.GREEN
+
+        return TrafficLight.UNKNOWN
+
+    def get_classification(self, img, min_score=0.75):
 
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_expanded = np.expand_dims(img_rgb, axis=0)
@@ -44,7 +66,7 @@ class TLClassifier(object):
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
 
-        detected_lights = [i[0] for i in zip(classes, scores) if i[1] > self.min_score]
+        detected_lights = [i[0] for i in zip(classes, scores) if i[1] > min_score]
 
         if detected_lights:
             votes = Counter(detected_lights)

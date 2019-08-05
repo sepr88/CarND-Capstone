@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 import rospy
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Int32
 from dbw_mkz_msgs.msg import ThrottleCmd, SteeringCmd, BrakeCmd, SteeringReport
 from geometry_msgs.msg import TwistStamped
-import math
 
 from twist_controller import Controller
 
@@ -30,6 +29,8 @@ Once you have the proposed throttle, brake, and steer values, publish it on the 
 that we have created in the `__init__` function.
 
 '''
+
+LOGGING_THROTTLE_FACTOR = 40
 
 class DBWNode(object):
     def __init__(self):
@@ -66,19 +67,27 @@ class DBWNode(object):
         rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb)
         rospy.Subscriber('/twist_cmd', TwistStamped, self.twist_cb)
         rospy.Subscriber('/current_velocity', TwistStamped, self.velocity_cb)
+        rospy.Subscriber('/tl_detector_state', Int32, self.tl_state_cb)
 
         self.current_vel = None
         self.curr_ang_vel = None
-        self.dbw_enabled = None
+        self.dbw_enabled = False
         self.linear_vel = None
         self.angular_vel = None
         self.throttle = self.steering = self.brake = 0
+        self.tl_detector_is_ready = False
+
+        self.throttle_limiter = GradientLimiter(init_value=self.throttle,
+                                                max_gradient=0.01)
+
+        self.process_count = 0
 
         self.loop()
 
     def loop(self):
         rate = rospy.Rate(50)  # 50Hz
         while not rospy.is_shutdown():
+            self.process_count += 1
             # Get predicted throttle, brake, and steering using `twist_controller`
             # You should only publish the control commands if dbw is enabled
             # throttle, brake, steering = self.controller.control(<proposed linear velocity>,
@@ -90,17 +99,42 @@ class DBWNode(object):
             #   self.publish(throttle, brake, steer)
 
             if not None in (self.current_vel, self.linear_vel, self.angular_vel):
-                self.throttle, self.brake, self.steering = self.controller.control(self.current_vel,
-                                                                                   self.dbw_enabled,
-                                                                                   self.linear_vel,
-                                                                                   self.angular_vel)
+                self.throttle, self.brake, self.steering = self.controller.control(current_vel=self.current_vel,
+                                                                                   dbw_enabled=self.dbw_enabled,
+                                                                                   linear_vel=self.linear_vel,
+                                                                                   angular_vel=self.angular_vel)
+
+            if not self.tl_detector_is_ready:
+                # rospy.logwarn('DBW NODE: Waiting for TL Detector')
+                self.throttle = 0.0
+                self.brake = 400
+                self.steering = 0.0
+
             if self.dbw_enabled:
+                # self.throttle = self.throttle_limiter.limit(self.throttle)
+
                 self.publish(self.throttle, self.brake, self.steering)
+
+                if (self.process_count % LOGGING_THROTTLE_FACTOR) == 0:
+                    rospy.logwarn('CONTROL: velocity={:.1f} throttle={:.2f}, brake={:.2f}, steering={:.4f}'.format(
+                        self.current_vel,
+                        self.throttle,
+                        self.brake,
+                        self.steering))
 
             rate.sleep()
 
+    def tl_state_cb(self, msg):
+        self.tl_detector_is_ready = Bool(msg)
+
     def dbw_enabled_cb(self, msg):
         self.dbw_enabled = msg
+
+        if self.dbw_enabled:
+            rospy.logerr('CONTROL: DBW enabled')
+            self.throttle_limiter.reset()
+        else:
+            rospy.logerr('CONTROL: DBW disabled')
 
     def twist_cb(self, msg):
         self.linear_vel = msg.twist.linear.x
@@ -126,6 +160,28 @@ class DBWNode(object):
         bcmd.pedal_cmd_type = BrakeCmd.CMD_TORQUE
         bcmd.pedal_cmd = brake
         self.brake_pub.publish(bcmd)
+
+
+class GradientLimiter(object):
+    def __init__(self, init_value, max_gradient):
+        self.init_value = init_value
+        self.old_value = self.init_value
+        self.max_gradient = max_gradient
+
+    def limit(self, value):
+        gradient = value - self.old_value
+
+        new_value = value
+
+        if gradient > self.max_gradient:
+            new_value = self.old_value + self.max_gradient
+
+        self.old_value = new_value
+
+        return new_value
+
+    def reset(self):
+        self.old_value = self.init_value
 
 
 if __name__ == '__main__':

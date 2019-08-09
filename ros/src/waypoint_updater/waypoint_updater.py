@@ -25,6 +25,8 @@ as well as to verify your TL classifier.
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
 MAX_DECEL = .5
+STOPLINE_OFFSET_SIM = 2
+STOPLINE_OFFSET_SITE = 4
 
 
 class WaypointUpdater(object):
@@ -36,12 +38,15 @@ class WaypointUpdater(object):
         self.base_waypoints = None
         self.waypoints_2d = None
         self.waypoint_tree = None
+        self.stopline_offset = max(STOPLINE_OFFSET_SITE, STOPLINE_OFFSET_SIM)
+        self.is_site = False
 
         rospy.init_node('waypoint_updater')
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
         rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
+        rospy.Subscriber('/is_site', Int32, self.site_cb)
 
         # Add a subscriber for /traffic_waypoint
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
@@ -79,6 +84,12 @@ class WaypointUpdater(object):
         final_lane = self.generate_lane()
         self.final_waypoints_pub.publish(final_lane)
 
+    def site_cb(self, msg):
+        self.is_site = True if msg else False
+        self.stopline_offset = STOPLINE_OFFSET_SITE if self.is_site else STOPLINE_OFFSET_SIM
+
+        rospy.logerr('SITE: {}'.format(self.stopline_offset))
+
     def generate_lane(self):
         lane = Lane()
 
@@ -101,7 +112,7 @@ class WaypointUpdater(object):
             p.pose = wp.pose
 
             # 2 waypoints back from line so front of car stops at the line
-            stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)
+            stop_idx = max(self.stopline_wp_idx - closest_idx - self.stopline_offset, 0)
             dist = self.distance(waypoints, i, stop_idx)
             vel = math.sqrt(2.0 * MAX_DECEL * dist)
             if vel < 1.:

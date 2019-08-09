@@ -69,6 +69,7 @@ class TLDetector(object):
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
         self.tl_detector_state_pub = rospy.Publisher('/tl_detector_state', Int32, queue_size=1)
+        self.is_site_pub = rospy.Publisher('/is_site', Int32, queue_size=1)
 
         self.state_count_th = STATE_COUNT_THRESHOLD
 
@@ -129,10 +130,10 @@ class TLDetector(object):
 
         """
         self.image_received = True
-
         is_initialized = self.is_initialized()
 
         self.tl_detector_state_pub.publish(Int32(is_initialized))
+        self.is_site_pub.publish(Int32(self.is_site))
 
         if not is_initialized:
             return

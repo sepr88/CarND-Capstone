@@ -4,7 +4,7 @@ import cv2
 from os.path import join
 from styx_msgs.msg import TrafficLight
 import sys
-import xml.etree.cElementTree as ET
+from lxml import etree as ET
 import numpy as np
 import os
 from shutil import copyfile
@@ -24,6 +24,7 @@ StateToString = \
         TrafficLight.GREEN: 'green',
         TrafficLight.UNKNOWN: 'unknown'
     }
+
 
 def save_td(uid, cv_image, label, csv_path, img_path):
     """
@@ -123,16 +124,16 @@ def convert_to_pascal_voc(out_path, img_path, img_name, boxes, label, img_shape)
 
             bndbox = ET.SubElement(obj_elem, "bndbox")
 
-            ET.SubElement(bndbox, "ymin").text = str(np.uint32(box[0] * img_shape[0]))
             ET.SubElement(bndbox, "xmin").text = str(np.uint32(box[1] * img_shape[1]))
-            ET.SubElement(bndbox, "ymax").text = str(np.uint32(box[2] * img_shape[0]))
+            ET.SubElement(bndbox, "ymin").text = str(np.uint32(box[0] * img_shape[0]))
             ET.SubElement(bndbox, "xmax").text = str(np.uint32(box[3] * img_shape[1]))
+            ET.SubElement(bndbox, "ymax").text = str(np.uint32(box[2] * img_shape[0]))
 
     tree = ET.ElementTree(annotation)
 
     name = img_name.split('.')[0]
 
-    tree.write(os.path.join(out_path, '{}.xml'.format(name)))
+    tree.write(os.path.join(out_path, '{}.xml'.format(name)), pretty_print=True)
 
 
 def get_immediate_subdirectories(a_dir):
@@ -140,21 +141,64 @@ def get_immediate_subdirectories(a_dir):
             if os.path.isdir(os.path.join(a_dir, name))]
 
 
-def copy_img_label(img_src, img_dst, label_src, label_dst):
+def copy_img_label(img_src, img_dst, label_src, label_dst, im_shape=None):
 
     # copy files
-    copyfile(img_src, img_dst)
+    try:
+        copyfile(img_src, img_dst)
+    except:
+        pass
+
     copyfile(label_src, label_dst)
 
     # update path in label[.xml] file
-
-    tree = ET.parse(label_dst)
+    tree = ET.parse(label_dst, ET.XMLParser(remove_blank_text=True))
     root = tree.getroot()
     elem = root.find('path')
     elem.text = img_dst
-    tree.write(label_dst)
+
+    if im_shape is not None:
+        elem = root.find('size')
+        elem.find('height').text = str(im_shape[0])
+        elem.find('width').text = str(im_shape[1])
+        elem.find('depth').text = str(im_shape[2])
 
     img_name = img_dst.split('/')[-1]
     elem = root.find('filename')
     elem.text = img_name
-    tree.write(label_dst)
+
+    obj = root.find('object')
+
+    if obj is not None:
+        for bbox in obj.findall('bndbox'):
+            xmin_obj = bbox.find('xmin')
+            ymin_obj = bbox.find('ymin')
+            xmax_obj = bbox.find('xmax')
+            ymax_obj = bbox.find('ymax')
+
+            xmin_val = np.uint32(xmin_obj.text)
+            ymin_val = np.uint32(ymin_obj.text)
+            xmax_val = np.uint32(xmax_obj.text)
+            ymax_val = np.uint32(ymax_obj.text)
+
+            bbox.remove(xmin_obj)
+            bbox.remove(ymin_obj)
+            bbox.remove(xmax_obj)
+            bbox.remove(ymax_obj)
+
+            ET.SubElement(bbox, "xmin").text = str(xmin_val)
+            ET.SubElement(bbox, "ymin").text = str(ymin_val)
+            ET.SubElement(bbox, "xmax").text = str(xmax_val)
+            ET.SubElement(bbox, "ymax").text = str(ymax_val)
+
+    tree.write(label_dst, pretty_print=True)
+
+
+def get_image_path_from_label(label):
+    if not os.path.isfile(label):
+        raise Exception('File does not exist: {0}'.format(label))
+
+    tree = ET.parse(label)
+    root = tree.getroot()
+
+    return root.find('path').text

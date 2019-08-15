@@ -1,19 +1,22 @@
 #!/usr/bin/env python
-import rospy
-from timeit import default_timer as timer
-from std_msgs.msg import Int32
-from geometry_msgs.msg import PoseStamped, Pose
-from styx_msgs.msg import TrafficLightArray, TrafficLight
-from styx_msgs.msg import Lane
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
-import yaml
-from scipy.spatial import KDTree
-from utils import tl_utils
-from utils.tl_utils import StateToString
 import os
+from timeit import default_timer as timer
+
+import rospy
 import tf
+import yaml
+from cv_bridge import CvBridge
+from geometry_msgs.msg import PoseStamped
+from scipy.spatial import KDTree
+from sensor_msgs.msg import Image
+from std_msgs.msg import Int32
+from styx_msgs.msg import Lane
+from styx_msgs.msg import TrafficLightArray, TrafficLight
+
 from light_classification.tl_classifier import TLClassifier
+from utils import tl_utils
+from utils import preprocessor as prep
+from utils.tl_utils import StateToString
 
 STATE_COUNT_THRESHOLD_SITE = 2
 STATE_COUNT_THRESHOLD = 1
@@ -28,6 +31,7 @@ OUTPUT_DIRNAME = 'tl-set-1'
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir))
 MODEL_PATH = os.path.join(BASE_PATH, 'data')
 OUTPUT_PATH = os.path.join(MODEL_PATH, OUTPUT_DIRNAME)
+
 
 class TLDetector(object):
     def __init__(self):
@@ -207,8 +211,11 @@ class TLDetector(object):
             # convert camera image to cv image
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
+            if self.is_site:
+                cv_image = prep.run_preprocessor_pipeline(cv_image)
+
             # Get classification
-            return self.classifier.get_classification(cv_image, min_score=0.55)
+            return self.classifier.get_classification(cv_image, min_score=0.65)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its

@@ -88,8 +88,6 @@ class WaypointUpdater(object):
         self.is_site = True if msg else False
         self.stopline_offset = STOPLINE_OFFSET_SITE if self.is_site else STOPLINE_OFFSET_SIM
 
-        rospy.logerr('SITE: {}'.format(self.stopline_offset))
-
     def generate_lane(self):
         lane = Lane()
 

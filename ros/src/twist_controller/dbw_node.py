@@ -32,6 +32,7 @@ that we have created in the `__init__` function.
 
 LOGGING_THROTTLE_FACTOR = 40
 
+
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')

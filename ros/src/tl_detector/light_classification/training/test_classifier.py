@@ -1,12 +1,18 @@
-import tensorflow as tf
-import numpy as np
 import glob
-from PIL import Image
-from utils import visualization_utils as vis_utils
-from utils import ops as utils_ops
-from utils import label_map_util
-from utils import tl_utils
 import os
+
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+import cv2
+import skimage as sk
+from skimage import transform, util, io
+
+from utils import preprocessor as prep
+from utils import label_map_util
+from utils import ops as utils_ops
+from utils import tl_utils
+from utils import visualization_utils as vis_utils
 
 flags = tf.app.flags
 flags.DEFINE_string('model',
@@ -21,7 +27,7 @@ flags.DEFINE_string('img_path',
                     '/home/basti/Desktop/rosbags/rosbag-3/exported',
                     'Directory containing images')
 
-flags.DEFINE_string('output_path',
+flags.DEFINE_string('out',
                     '/home/basti/Desktop/rosbags/rosbag-3/result',
                     'Directory to store the visualized classification result.')
 
@@ -102,10 +108,21 @@ class TrafficLightClassifier(object):
         return output_dict
 
     @staticmethod
-    def load_image_into_numpy_array(image):
-        (im_width, im_height) = image.size
+    def load_grayscale_into_numpy_array(image):
+        last_axis = -1
+        dim_to_repeat = 2
+        repeats = 3
 
-        return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+        grscale_img_3dims = np.expand_dims(image, last_axis)
+        training_image = np.repeat(grscale_img_3dims, repeats, dim_to_repeat).astype('uint8')
+        assert len(training_image.shape) == 3
+        assert training_image.shape[-1] == 3
+        return training_image
+
+    @staticmethod
+    def load_image_into_numpy_array(image):
+        im_height, im_width, depth = image.shape
+        return np.array(image).reshape((im_height, im_width, 3)).astype(np.uint8)
 
     def run(self):
         samples = glob.glob(self.img_path + '/*.jpg')
@@ -115,10 +132,25 @@ class TrafficLightClassifier(object):
 
         for sample in samples:
             tl_utils.print_progress(i, num_lines, prefix='Progress', suffix='Complete', bar_length=50)
-            img = Image.open(sample)
-            img = TrafficLightClassifier.load_image_into_numpy_array(img)
+
+            # read in image
+            img = sk.io.imread(sample)
+
+            # pre-processing (normalization, crop, convert to grayscale)
+            img = prep.run_preprocessor_pipeline(img)
+
+            # load image into numpy array
+            if len(img.shape) == 3:
+                img = TrafficLightClassifier.load_image_into_numpy_array(img)
+            elif len(img.shape) == 2:
+                img = TrafficLightClassifier.load_grayscale_into_numpy_array(img)
+            else:
+                raise Exception('Unknown image shape: {0}'.format(img.shape))
+
+            # expand image
             img_expanded = np.expand_dims(img, axis=0)
 
+            # inference
             output_dict = TrafficLightClassifier.run_inference_for_single_image(img_expanded, self.detection_graph)
             boxes = output_dict['detection_boxes']
             classes = output_dict['detection_classes']
@@ -139,7 +171,7 @@ def main(_):
     classifier = TrafficLightClassifier(model=FLAGS.model,
                                         label_map=FLAGS.label_map,
                                         img_path=FLAGS.img_path,
-                                        output_path=FLAGS.output_path)
+                                        output_path=FLAGS.out)
     classifier.run()
 
 

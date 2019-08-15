@@ -1,8 +1,7 @@
 import os
-from utils.tl_utils import yes_or_no, copy_img_label
+from utils.tl_utils import copy_img_label
 from sklearn.model_selection import train_test_split
 import glob
-from shutil import copyfile
 import xml.etree.ElementTree as ET
 import tensorflow as tf
 
@@ -15,23 +14,25 @@ flags.DEFINE_string('label_dir', 'voc-labels', '')
 FLAGS = flags.FLAGS
 
 
+def _mkdirs(dirs):
+    for dir in dirs:
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
+
 def split_dataset(in_path, out_path, img_dir, label_dir, validation_size):
 
     if not os.path.exists(in_path):
-        print("input path does not exist: {}".format(in_path))
-        return
+        raise Exception("input path does not exist: {}".format(in_path))
 
     in_img_path = os.path.join(in_path, img_dir)
     if not os.path.exists(in_img_path):
-        print("image path does not exist: {}".format(in_img_path))
-        return
+        raise Exception("image path does not exist: {}".format(in_img_path))
 
     in_label_path = os.path.join(in_path, label_dir)
     if not os.path.exists(in_label_path):
-        print("label path does not exist: {}".format(in_label_path))
-        return
+        raise Exception("label path does not exist: {}".format(in_label_path))
 
-    overwrite = True
     train_base_path = os.path.join(out_path, 'train_set')
     train_img_path = os.path.join(train_base_path, 'img')
     train_label_path = os.path.join(train_base_path, 'labels')
@@ -40,20 +41,8 @@ def split_dataset(in_path, out_path, img_dir, label_dir, validation_size):
     valid_img_path = os.path.join(valid_base_path, 'img')
     valid_label_path = os.path.join(valid_base_path, 'labels')
 
-    if not os.path.exists(out_path):
-        os.mkdir(out_path)
-        os.mkdir(train_base_path)
-        os.mkdir(train_img_path)
-        os.mkdir(train_label_path)
-        os.mkdir(valid_base_path)
-        os.mkdir(valid_img_path)
-        os.mkdir(valid_label_path)
-    else:
-        overwrite = yes_or_no('Overwrite existing?')
-
-    if not overwrite:
-        print('Not implemented. Aborting.')
-        return
+    _mkdirs([out_path, train_base_path, train_img_path, train_label_path,
+             valid_base_path, valid_img_path, valid_label_path])
 
     # read in training data
     labels_train, labels_test = train_test_split(glob.glob(in_label_path + '/*.xml'),
